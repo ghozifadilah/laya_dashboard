@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  laya-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laya_decision_api
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DEVICE=auto
+      - PRELOAD_ON_STARTUP=false
+      - MAX_LOADED_MODELS=2
+      - MOCK_MODE=false
+      - API_KEY_ENABLED=false
+    volumes:
+      - hf_cache:/root/.cache/huggingface
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Optional GPU-accelerated service definition
+  # Run with: docker compose --profile gpu up
+  laya-api-gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laya_decision_api_gpu
+    profiles: ["gpu"]
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DEVICE=cuda
+      - PRELOAD_ON_STARTUP=true
+      - MAX_LOADED_MODELS=2
+    volumes:
+      - hf_cache:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+
+volumes:
+  hf_cache:

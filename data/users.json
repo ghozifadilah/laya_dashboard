@@ -1,0 +1,13 @@
+{
+  "users": {
+    "admin": {
+      "username": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "password_hash": "d34c8d06bc6dd471b167e65ba0ad15b4873b9e6bffc2475e9f017d5bc6eb1528",
+      "salt": "a3e331beea8c6bd5c350e66e9ef7d832",
+      "created_at": 0,
+      "updated_at": 0
+    }
+  }
+}

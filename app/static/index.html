@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laya Decision Studio - Enterprise Decision Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    pre, code, textarea, input.font-mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-emerald-500 selection:text-black">
+
+  <!-- ========================================== -->
+  <!-- 1. DEDICATED LOGIN SCREEN (WHEN NOT LOGGED IN) -->
+  <!-- ========================================== -->
+  <div id="login-screen" class="min-h-screen flex items-center justify-center p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black">
+    <div class="max-w-md w-full space-y-6">
+      
+      <!-- Brand Logo & Header -->
+      <div class="text-center space-y-2">
+        <div class="inline-flex w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 via-teal-500 to-emerald-700 items-center justify-center font-black text-2xl text-slate-950 shadow-2xl shadow-emerald-900/50 mb-2">
+          L
+        </div>
+        <h1 class="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+          LAYA DECISION STUDIO
+        </h1>
+        <p class="text-xs text-slate-400 max-w-xs mx-auto">
+          Non-Autoregressive System 1 Fast Decision Engine. Silakan login untuk mengelola workflow.
+        </p>
+      </div>
+
+      <!-- Login Card -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-7 shadow-2xl backdrop-blur space-y-5">
+        
+        <!-- Default Credentials Notice -->
+        <div class="p-3 bg-emerald-950/70 border border-emerald-800/80 rounded-xl text-xs text-emerald-300 flex items-start space-x-2">
+          <span class="text-base">💡</span>
+          <div>
+            <span class="font-bold">Default Akun:</span><br>
+            Username: <code class="font-bold text-white bg-slate-900 px-1 py-0.5 rounded">admin</code> | 
+            Password: <code class="font-bold text-white bg-slate-900 px-1 py-0.5 rounded">admin123</code>
+          </div>
+        </div>
+
+        <form id="login-form" onsubmit="event.preventDefault(); submitLogin();" class="space-y-4">
+          <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1.5">Username</label>
+            <input type="text" id="login-username" value="admin" required autocomplete="username"
+              class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-3 text-sm text-slate-200 font-mono outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition placeholder:text-slate-600"
+              placeholder="Masukkan username...">
+          </div>
+
+          <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1.5">Password</label>
+            <input type="password" id="login-password" value="admin123" required autocomplete="current-password"
+              class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-3 text-sm text-slate-200 font-mono outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition placeholder:text-slate-600"
+              placeholder="Masukkan password...">
+          </div>
+
+          <div id="login-error" class="hidden p-3 bg-red-950/80 border border-red-800/80 rounded-xl text-xs text-red-300 font-medium"></div>
+
+          <button type="submit" id="login-submit-btn" class="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-950 transition transform active:scale-[0.99] flex items-center justify-center space-x-2">
+            <svg id="login-spinner" class="hidden animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+            <span id="login-btn-text">Masuk ke Studio</span>
+          </button>
+        </form>
+
+      </div>
+
+      <div class="text-center text-xs text-slate-500">
+        Laya Decision Engine v1.0 • Sub-35ms Inferences
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 2. MAIN APPLICATION SCREEN (AFTER LOGIN) -->
+  <!-- ========================================== -->
+  <div id="app-screen" class="hidden min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <header class="border-b border-slate-800/80 bg-slate-900/80 backdrop-blur sticky top-0 z-40">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center font-black text-slate-950 shadow-lg shadow-emerald-950">
+            L
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">LAYA STUDIO</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 font-mono font-bold">System 1</span>
+            </div>
+            <p class="text-[11px] text-slate-400 -mt-0.5">Non-Autoregressive Decision Engine (33ms)</p>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <!-- API Keys Token Manager Button -->
+          <button onclick="openApiTokensModal()" class="flex items-center space-x-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-600/50 transition shadow-sm">
+            <span>🔑</span>
+            <span>API Tokens</span>
+            <span id="nav-key-badge" class="ml-1 text-[10px] bg-emerald-800 text-emerald-100 px-1.5 py-0.2 rounded-full font-mono">0</span>
+          </button>
+
+          <!-- Hardware badge -->
+          <div id="hw-status" class="hidden md:flex items-center space-x-2 text-xs text-slate-300 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-lg font-mono">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span id="device-label">Device: AUTO</span>
+          </div>
+
+          <!-- Docs link -->
+          <a href="/docs" target="_blank" class="hidden sm:inline-flex text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition items-center space-x-1">
+            <span>Docs</span>
+            <span class="text-slate-400">↗</span>
+          </a>
+
+          <!-- User Menu Dropdown -->
+          <div class="relative inline-block text-left">
+            <button onclick="toggleUserDropdown()" class="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span id="user-display-name">admin</span>
+              <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </button>
+            <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-52 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl py-1.5 z-50">
+              <div class="px-3.5 py-2 border-b border-slate-800 text-[11px] text-slate-400">
+                Masuk sebagai <b id="user-dropdown-role" class="text-emerald-400">ADMIN</b>
+              </div>
+              <button onclick="openApiTokensModal()" class="w-full text-left px-3.5 py-2 text-xs text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                🔑 Kelola API Tokens
+              </button>
+              <button onclick="openChangePasswordModal()" class="w-full text-left px-3.5 py-2 text-xs text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                🔒 Ganti Password
+              </button>
+              <button onclick="logout()" class="w-full text-left px-3.5 py-2 text-xs text-red-400 hover:bg-slate-800 transition border-t border-slate-800/80">
+                🚪 Logout
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Grid Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Left Column: Inputs & Workflows (6 Cols) -->
+      <div class="lg:col-span-6 space-y-5">
+        
+        <!-- Workflow Presets Card -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Decision Workflows</span>
+              <span id="workflow-count-badge" class="text-[11px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full font-mono">0</span>
+            </div>
+            <button onclick="openNewWorkflowModal()" class="text-xs font-bold px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-lg shadow-md transition flex items-center space-x-1.5">
+              <span>+</span>
+              <span>Workflow Baru</span>
+            </button>
+          </div>
+          
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1" id="presets-container">
+            <!-- Loaded dynamically -->
+          </div>
+        </div>
+
+        <!-- State Input Card -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-400">1. Input State (Text / JSON / Email)</label>
+            <div id="lang-indicator" class="text-xs font-mono text-slate-400">
+              Detected: <span class="text-emerald-400">English (latin)</span>
+            </div>
+          </div>
+          <textarea id="state-input" rows="5" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs text-slate-200 font-mono focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition resize-y" placeholder="Masukkan teks keluhan, tiket, email, atau JSON..."></textarea>
+        </div>
+
+        <!-- Questions Schema Card -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <label class="text-xs font-bold uppercase tracking-wider text-slate-400">2. Questions Schema (JSON)</label>
+            </div>
+            <div class="flex items-center space-x-3 text-xs">
+              <select id="model-override-select" onchange="updateCurlPreview()" class="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1 text-slate-300 font-mono outline-none focus:border-emerald-500">
+                <option value="auto">Model: Auto Router</option>
+                <option value="english">Model: English (ModernBERT)</option>
+                <option value="multilingual">Model: Multilingual (100+ langs)</option>
+                <option value="typed-decisions">Model: Typed-Decisions</option>
+              </select>
+              <button onclick="formatQuestionsJSON()" class="text-slate-400 hover:text-slate-200 font-mono underline">Format</button>
+            </div>
+          </div>
+          <textarea id="questions-input" rows="8" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs text-slate-200 font-mono focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition resize-y" placeholder="JSON schema pertanyaan..."></textarea>
+        </div>
+
+        <!-- Action Button -->
+        <button id="run-btn" onclick="executeDecision()" class="w-full py-3.5 bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 hover:opacity-95 text-white font-bold rounded-xl shadow-xl shadow-emerald-950/60 flex items-center justify-center space-x-2 transition transform active:scale-[0.99]">
+          <svg id="spinner" class="hidden animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+          </svg>
+          <span id="btn-text">⚡ Jalankan Decision Engine (1 Forward Pass)</span>
+        </button>
+
+      </div>
+
+      <!-- Right Column: Results & Code Snippets (6 Cols) -->
+      <div class="lg:col-span-6 space-y-5">
+
+        <!-- Metrics Row -->
+        <div class="grid grid-cols-3 gap-3">
+          <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 text-center">
+            <div class="text-[11px] text-slate-400 uppercase font-semibold">Latency</div>
+            <div id="stat-latency" class="text-xl font-bold font-mono text-emerald-400 mt-0.5">-- ms</div>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 text-center">
+            <div class="text-[11px] text-slate-400 uppercase font-semibold">Checkpoint</div>
+            <div id="stat-model" class="text-xl font-bold font-mono text-cyan-400 capitalize mt-0.5">--</div>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 text-center">
+            <div class="text-[11px] text-slate-400 uppercase font-semibold">Questions</div>
+            <div id="stat-qcount" class="text-xl font-bold font-mono text-indigo-400 mt-0.5">0</div>
+          </div>
+        </div>
+
+        <!-- Tabbed Viewer: Visual Decisions vs Live cURL vs Python vs JSON -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+          
+          <!-- Tabs Header -->
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex space-x-1 sm:space-x-2" id="output-tabs">
+              <button onclick="switchTab('visual')" id="tab-visual" class="px-3 py-1.5 rounded-lg text-xs font-bold transition bg-emerald-950 text-emerald-300 border border-emerald-500/40">
+                📊 Decision Results
+              </button>
+              <button onclick="switchTab('curl')" id="tab-curl" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition">
+                cURL Preview
+              </button>
+              <button onclick="switchTab('python')" id="tab-python" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition">
+                Python
+              </button>
+              <button onclick="switchTab('json')" id="tab-json" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition">
+                Raw JSON
+              </button>
+            </div>
+            <button onclick="copyCurrentTabContent()" class="text-xs text-slate-400 hover:text-emerald-400 font-mono flex items-center space-x-1">
+              <span>📋 Copy</span>
+            </button>
+          </div>
+
+          <!-- Tab 1: Visual Decisions -->
+          <div id="view-visual" class="space-y-3">
+            <div id="routing-reason-box" class="hidden px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-300 font-mono flex items-center justify-between">
+              <span id="routing-reason-text">Route reason...</span>
+              <span class="text-emerald-400 font-bold text-[11px]">OPTIMIZED</span>
+            </div>
+            <div id="answers-visualizer" class="space-y-3">
+              <div class="text-center py-16 text-slate-500 text-sm">
+                Pilih salah satu workflow atau klik <span class="text-emerald-400 font-semibold">"Jalankan Decision Engine"</span> untuk melihat hasil terkalibrasi.
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab 2: Live cURL Preview -->
+          <div id="view-curl" class="hidden space-y-2">
+            <div class="text-[11px] text-slate-400 flex items-center justify-between">
+              <span>Live cURL command (menggunakan API Token aktif):</span>
+              <span class="text-emerald-400 font-mono text-[10px]">Header: X-API-Key</span>
+            </div>
+            <pre id="curl-code" class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs text-emerald-400 font-mono overflow-x-auto max-h-96"></pre>
+          </div>
+
+          <!-- Tab 3: Python Code -->
+          <div id="view-python" class="hidden space-y-2">
+            <div class="text-[11px] text-slate-400">Python code snippet (lengkap dengan API Token):</div>
+            <pre id="python-code" class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs text-cyan-300 font-mono overflow-x-auto max-h-96"></pre>
+          </div>
+
+          <!-- Tab 4: Raw JSON Response -->
+          <div id="view-json" class="hidden space-y-2">
+            <pre id="raw-json-output" class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs text-emerald-400 font-mono overflow-x-auto max-h-96">{}</pre>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Modal: API Tokens Management -->
+  <div id="api-tokens-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-5 my-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+            <span>🔑 Pengaturan API Tokens</span>
+          </h3>
+          <p class="text-xs text-slate-400">Generate dan kelola API Token untuk mengamankan akses API dari client luar.</p>
+        </div>
+        <button onclick="closeApiTokensModal()" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+
+      <!-- Protection Toggle Switch -->
+      <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-between">
+        <div>
+          <div class="font-bold text-xs text-white">Wajibkan Proteksi API Token</div>
+          <div class="text-[11px] text-slate-400">Jika aktif, semua request eksternal tanpa header <code class="text-emerald-400 font-mono">X-API-Key</code> akan ditolak (401 Unauthorized).</div>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" id="protection-toggle" onchange="handleToggleProtection(this.checked)" class="sr-only peer">
+          <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+        </label>
+      </div>
+
+      <!-- Generate New Token Form -->
+      <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
+        <label class="font-bold text-xs text-slate-300 block">Buat Token Baru</label>
+        <div class="flex items-center space-x-2">
+          <input type="text" id="new-token-name" placeholder="Nama Token (contoh: Backend Mobile, Zapier, Webhook)"
+            class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none focus:border-emerald-500">
+          <button onclick="submitGenerateKey()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow transition">
+            + Generate Token
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Tokens List -->
+      <div class="space-y-2.5">
+        <div class="flex items-center justify-between">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Daftar API Token Aktif</label>
+          <span id="token-list-count" class="text-xs text-slate-400 font-mono">0 token</span>
+        </div>
+        <div id="tokens-table" class="space-y-2 max-h-52 overflow-y-auto pr-1">
+          <!-- Loaded via JS -->
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end pt-3 border-t border-slate-800">
+        <button onclick="closeApiTokensModal()" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl transition">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Change Password -->
+  <div id="chpass-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-bold text-white">🔑 Ganti Password</h3>
+        <button onclick="closeChangePasswordModal()" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Password Lama</label>
+          <input type="password" id="old-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 outline-none focus:border-emerald-500 font-mono">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Password Baru (min 4 karakter)</label>
+          <input type="password" id="new-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 outline-none focus:border-emerald-500 font-mono">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Konfirmasi Password Baru</label>
+          <input type="password" id="confirm-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 outline-none focus:border-emerald-500 font-mono">
+        </div>
+        <div id="chpass-error" class="hidden text-xs text-red-400"></div>
+        <div id="chpass-success" class="hidden text-xs text-emerald-400"></div>
+      </div>
+      <button onclick="submitChangePassword()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg transition">
+        Simpan Password Baru
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal: Create New Workflow / Project -->
+  <div id="new-workflow-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-5 my-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-bold text-white">✨ Buat Project / Workflow Baru</h3>
+          <p class="text-xs text-slate-400">Buat alur keputusan otomatis kustom yang disimpan permanen di backend.</p>
+        </div>
+        <button onclick="closeNewWorkflowModal()" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+
+      <div class="space-y-4 max-h-[65vh] overflow-y-auto pr-1">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">ID Workflow (Unik, huruf kecil & underscore)</label>
+            <input type="text" id="new-wf-name" placeholder="contoh: fraud_order_detection" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 font-mono outline-none focus:border-emerald-500">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Judul Tampilan (Title)</label>
+            <input type="text" id="new-wf-title" placeholder="contoh: Fraud & Risk Scoring" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 outline-none focus:border-emerald-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Deskripsi Workflow</label>
+          <input type="text" id="new-wf-desc" placeholder="Menilai risiko penipuan transaksi e-commerce..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 outline-none focus:border-emerald-500">
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Model Target</label>
+          <select id="new-wf-model" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 font-mono outline-none focus:border-emerald-500">
+            <option value="auto">Auto Router (Otomatis)</option>
+            <option value="english">English (ModernBERT)</option>
+            <option value="multilingual">Multilingual (Bahasa Indonesia & 100+ Bahasa)</option>
+            <option value="typed-decisions">Typed-Decisions Workflow</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Contoh State Input (Teks atau JSON)</label>
+          <textarea id="new-wf-state" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 font-mono outline-none focus:border-emerald-500" placeholder='{"order_id": "ORD-123", "amount": 5000000, "note": "Pembelian mendadak nominal besar"}'></textarea>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-xs font-semibold text-slate-300">Daftar Pertanyaan (Questions Schema JSON)</label>
+            <button onclick="insertSampleQuestions()" class="text-xs text-emerald-400 hover:underline font-mono">Gunakan Template Contoh</button>
+          </div>
+          <textarea id="new-wf-questions" rows="7" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 font-mono outline-none focus:border-emerald-500" placeholder='{
+  "tindakan": {
+    "type": "choice",
+    "instructions": "Apa tindakan untuk order ini?",
+    "criteria": {
+      "approve": "transaksi aman",
+      "review": "perlu verifikasi manual",
+      "reject": "terindikasi penipuan"
+    }
+  },
+  "indikasi_fraud": {
+    "type": "noul",
+    "instructions": "Apakah ada indikasi penipuan?"
+  }
+}'></textarea>
+        </div>
+
+        <div id="new-wf-error" class="hidden text-xs text-red-400"></div>
+      </div>
+
+      <div class="flex items-center justify-end space-x-3 pt-3 border-t border-slate-800">
+        <button onclick="closeNewWorkflowModal()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl transition">
+          Batal
+        </button>
+        <button onclick="saveNewWorkflow()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg transition">
+          Simpan Workflow
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let presets = [];
+    let currentPreset = null;
+    let currentTab = 'visual';
+    let lastResultData = null;
+    let authToken = localStorage.getItem('laya_token') || null;
+    let currentUser = null;
+    let apiKeysList = [];
+    let activeApiKey = null;
+
+    async function init() {
+      await checkAuth();
+      if (authToken) {
+        await loadHealth();
+        await loadApiKeys();
+        await loadPresets();
+        updateCurlPreview();
+      }
+    }
+
+    async function checkAuth() {
+      if (!authToken) {
+        showLoginScreen();
+        return;
+      }
+      try {
+        const res = await fetch('/api/v1/auth/me', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        if (res.ok) {
+          currentUser = await res.json();
+          showAppScreen(currentUser);
+        } else {
+          logout();
+        }
+      } catch (e) {
+        showLoginScreen();
+      }
+    }
+
+    function showLoginScreen() {
+      document.getElementById('login-screen').classList.remove('hidden');
+      document.getElementById('app-screen').classList.add('hidden');
+    }
+
+    function showAppScreen(user) {
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('app-screen').classList.remove('hidden');
+      document.getElementById('user-display-name').textContent = user.name || user.username;
+      document.getElementById('user-dropdown-role').textContent = (user.role || 'USER').toUpperCase();
+    }
+
+    function toggleUserDropdown() {
+      const drop = document.getElementById('user-dropdown');
+      drop.classList.toggle('hidden');
+    }
+
+    async function submitLogin() {
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value.trim();
+      const errEl = document.getElementById('login-error');
+      const btn = document.getElementById('login-submit-btn');
+      const spinner = document.getElementById('login-spinner');
+      const btnText = document.getElementById('login-btn-text');
+
+      errEl.classList.add('hidden');
+      btn.disabled = true;
+      spinner.classList.remove('hidden');
+      btnText.textContent = "Memverifikasi...";
+
+      try {
+        const res = await fetch('/api/v1/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (res.ok && data.token) {
+          authToken = data.token;
+          currentUser = data.user;
+          localStorage.setItem('laya_token', authToken);
+          showAppScreen(currentUser);
+          await loadHealth();
+          await loadApiKeys();
+          await loadPresets();
+          updateCurlPreview();
+        } else {
+          errEl.textContent = data.detail || 'Username atau password salah.';
+          errEl.classList.remove('hidden');
+        }
+      } catch (e) {
+        errEl.textContent = 'Gagal menghubungi server: ' + e.message;
+        errEl.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        spinner.classList.add('hidden');
+        btnText.textContent = "Masuk ke Studio";
+      }
+    }
+
+    async function logout() {
+      if (authToken) {
+        try {
+          await fetch('/api/v1/auth/logout', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${authToken}` }
+          });
+        } catch (e) {}
+      }
+      authToken = null;
+      currentUser = null;
+      localStorage.removeItem('laya_token');
+      showLoginScreen();
+    }
+
+    // ==========================================
+    // API KEYS MANAGEMENT
+    // ==========================================
+    async function loadApiKeys() {
+      try {
+        const res = await fetch('/api/v1/api-keys', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          apiKeysList = data.keys || [];
+          document.getElementById('nav-key-badge').textContent = apiKeysList.length;
+          document.getElementById('protection-toggle').checked = data.protection_enabled;
+          if (apiKeysList.length > 0) {
+            activeApiKey = apiKeysList[0].token;
+          }
+          renderApiKeysTable();
+        }
+      } catch (e) {}
+    }
+
+    function renderApiKeysTable() {
+      const container = document.getElementById('tokens-table');
+      const countEl = document.getElementById('token-list-count');
+      countEl.textContent = `${apiKeysList.length} token aktif`;
+      container.innerHTML = '';
+
+      if (apiKeysList.length === 0) {
+        container.innerHTML = '<div class="text-xs text-slate-500 py-3 text-center">Belum ada API Key dibuat.</div>';
+        return;
+      }
+
+      apiKeysList.forEach(k => {
+        const row = document.createElement('div');
+        row.className = 'p-3 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between';
+        row.innerHTML = `
+          <div class="space-y-1">
+            <div class="flex items-center space-x-2">
+              <span class="text-xs font-bold text-slate-200">${k.name}</span>
+              <span class="text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-800 px-1.5 py-0.2 rounded font-mono">Aktif</span>
+            </div>
+            <div class="font-mono text-xs text-emerald-400/90 flex items-center space-x-2">
+              <span>${k.token}</span>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button onclick="copyText('${k.token}')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-lg transition font-mono">
+              Salin
+            </button>
+            <button onclick="deleteApiKey('${k.id}')" title="Revoke key" class="p-1 text-slate-500 hover:text-red-400 transition">
+              ✕
+            </button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function openApiTokensModal() {
+      document.getElementById('user-dropdown').classList.add('hidden');
+      document.getElementById('new-token-name').value = '';
+      document.getElementById('api-tokens-modal').classList.remove('hidden');
+      loadApiKeys();
+    }
+
+    function closeApiTokensModal() {
+      document.getElementById('api-tokens-modal').classList.add('hidden');
+      updateCurlPreview();
+    }
+
+    async function handleToggleProtection(enabled) {
+      try {
+        const res = await fetch('/api/v1/api-keys/toggle-protection', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ enabled })
+        });
+        const d = await res.json();
+        alert(d.message);
+      } catch (e) {
+        alert("Gagal mengubah proteksi: " + e.message);
+      }
+    }
+
+    async function submitGenerateKey() {
+      const name = document.getElementById('new-token-name').value.trim() || 'API Key Baru';
+      try {
+        const res = await fetch('/api/v1/api-keys', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ name })
+        });
+        if (res.ok) {
+          document.getElementById('new-token-name').value = '';
+          await loadApiKeys();
+        } else {
+          alert("Gagal membuat API Key.");
+        }
+      } catch (e) {
+        alert("Error: " + e.message);
+      }
+    }
+
+    async function deleteApiKey(id) {
+      if (!confirm("Apakah Anda yakin ingin menghapus / merevoke API Key ini? Client yang menggunakan key ini akan ditolak.")) return;
+      try {
+        const res = await fetch(`/api/v1/api-keys/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        if (res.ok) {
+          await loadApiKeys();
+        }
+      } catch (e) {
+        alert("Error: " + e.message);
+      }
+    }
+
+    function copyText(val) {
+      navigator.clipboard.writeText(val);
+      alert("API Token disalin ke clipboard!");
+    }
+
+    // ==========================================
+    // PRESETS & DECISION ENGINE
+    // ==========================================
+    async function loadPresets() {
+      try {
+        const res = await fetch('/api/v1/presets');
+        const data = await res.json();
+        presets = data.presets || [];
+        document.getElementById('workflow-count-badge').textContent = presets.length;
+        renderPresetButtons();
+        if (presets.length > 0) {
+          selectPreset(presets[0].name);
+        }
+      } catch (err) {
+        console.error("Failed to load presets:", err);
+      }
+    }
+
+    async function loadHealth() {
+      try {
+        const res = await fetch('/health');
+        const data = await res.json();
+        document.getElementById('device-label').textContent = `Device: ${data.device.toUpperCase()}`;
+        document.getElementById('hw-status').classList.remove('hidden');
+      } catch (err) {}
+    }
+
+    function renderPresetButtons() {
+      const container = document.getElementById('presets-container');
+      container.innerHTML = '';
+      presets.forEach(p => {
+        const btn = document.createElement('div');
+        const isSelected = currentPreset && currentPreset.name === p.name;
+        btn.className = `preset-card relative p-2.5 rounded-xl border text-left cursor-pointer transition flex flex-col justify-between ${
+          isSelected
+            ? 'bg-emerald-950/80 border-emerald-500/60 text-emerald-300 ring-1 ring-emerald-500/40'
+            : 'bg-slate-950/70 border-slate-800 text-slate-300 hover:border-slate-700'
+        }`;
+        btn.id = `preset-btn-${p.name}`;
+        
+        let customBadge = p.is_custom
+          ? `<span class="text-[9px] bg-indigo-900/80 text-indigo-300 px-1.5 py-0.2 rounded font-mono">Custom</span>`
+          : `<span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.2 rounded font-mono">Preset</span>`;
+
+        let deleteBtn = p.is_custom
+          ? `<button onclick="deleteCustomWorkflow('${p.name}', event)" title="Hapus workflow" class="text-slate-400 hover:text-red-400 p-0.5">✕</button>`
+          : '';
+
+        btn.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-xs truncate max-w-[120px]">${p.title || p.name}</span>
+            <div class="flex items-center space-x-1">${customBadge}${deleteBtn}</div>
+          </div>
+          <span class="text-[10px] text-slate-400 truncate mt-1">${p.description ? p.description.slice(0, 32) + '...' : p.name}</span>
+        `;
+        btn.onclick = () => selectPreset(p.name);
+        container.appendChild(btn);
+      });
+    }
+
+    function selectPreset(name) {
+      currentPreset = presets.find(p => p.name === name);
+      renderPresetButtons();
+
+      if (currentPreset) {
+        document.getElementById('state-input').value = typeof currentPreset.example_state === 'object'
+          ? JSON.stringify(currentPreset.example_state, null, 2)
+          : currentPreset.example_state;
+        document.getElementById('questions-input').value = JSON.stringify(currentPreset.questions, null, 2);
+        if (currentPreset.model) {
+          document.getElementById('model-override-select').value = currentPreset.model;
+        }
+      }
+      inspectLang();
+      updateCurlPreview();
+    }
+
+    async function inspectLang() {
+      const text = document.getElementById('state-input').value;
+      if (!text.trim()) return;
+      try {
+        const res = await fetch('/api/v1/lang/detect', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ text })
+        });
+        const d = await res.json();
+        const langStr = d.language ? d.language.toUpperCase() : 'Non-Latin';
+        document.getElementById('lang-indicator').innerHTML = `Detected: <span class="text-emerald-400 font-bold">${langStr} (${d.script})</span>`;
+      } catch (e) {}
+    }
+
+    document.getElementById('state-input').addEventListener('input', () => {
+      clearTimeout(window._langTimer);
+      window._langTimer = setTimeout(() => {
+        inspectLang();
+        updateCurlPreview();
+      }, 300);
+    });
+
+    document.getElementById('questions-input').addEventListener('input', () => {
+      updateCurlPreview();
+    });
+
+    function formatQuestionsJSON() {
+      try {
+        const parsed = JSON.parse(document.getElementById('questions-input').value);
+        document.getElementById('questions-input').value = JSON.stringify(parsed, null, 2);
+        updateCurlPreview();
+      } catch (e) {
+        alert("JSON pertanyaan tidak valid: " + e.message);
+      }
+    }
+
+    function updateCurlPreview() {
+      const stateVal = document.getElementById('state-input').value.trim();
+      const questionsVal = document.getElementById('questions-input').value.trim();
+      const modelVal = document.getElementById('model-override-select').value;
+
+      let parsedState;
+      try {
+        parsedState = JSON.parse(stateVal);
+      } catch (e) {
+        parsedState = stateVal;
+      }
+
+      let parsedQuestions = {};
+      try {
+        parsedQuestions = JSON.parse(questionsVal);
+      } catch (e) {}
+
+      const reqBody = {
+        state: parsedState,
+        questions: parsedQuestions
+      };
+      if (modelVal && modelVal !== 'auto') {
+        reqBody.model = modelVal;
+      }
+
+      const keyToUse = activeApiKey || (apiKeysList.length > 0 ? apiKeysList[0].token : 'laya_live_your_api_token_here');
+
+      const curlStr = `curl -X POST "http://localhost:8000/api/v1/predict" \\
+  -H "Content-Type: application/json" \\
+  -H "X-API-Key: ${keyToUse}" \\
+  -d '${JSON.stringify(reqBody, null, 2)}'`;
+
+      document.getElementById('curl-code').textContent = curlStr;
+
+      const pythonStr = `import requests
+
+url = "http://localhost:8000/api/v1/predict"
+headers = {
+    "Content-Type": "application/json",
+    "X-API-Key": "${keyToUse}"
+}
+payload = ${JSON.stringify(reqBody, null, 4)}
+
+response = requests.post(url, headers=headers, json=payload)
+print(response.json())`;
+
+      document.getElementById('python-code').textContent = pythonStr;
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      const tabs = ['visual', 'curl', 'python', 'json'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        const view = document.getElementById(`view-${t}`);
+        if (t === tab) {
+          btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition bg-emerald-950 text-emerald-300 border border-emerald-500/40';
+          view.classList.remove('hidden');
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition';
+          view.classList.add('hidden');
+        }
+      });
+    }
+
+    function copyCurrentTabContent() {
+      let textToCopy = '';
+      if (currentTab === 'curl') {
+        textToCopy = document.getElementById('curl-code').textContent;
+      } else if (currentTab === 'python') {
+        textToCopy = document.getElementById('python-code').textContent;
+      } else if (currentTab === 'json') {
+        textToCopy = document.getElementById('raw-json-output').textContent;
+      } else {
+        textToCopy = JSON.stringify(lastResultData, null, 2);
+      }
+      navigator.clipboard.writeText(textToCopy);
+      alert("Teks berhasil disalin ke clipboard!");
+    }
+
+    async function executeDecision() {
+      const btn = document.getElementById('run-btn');
+      const spinner = document.getElementById('spinner');
+      const btnText = document.getElementById('btn-text');
+      
+      let stateVal = document.getElementById('state-input').value.trim();
+      let questionsVal = document.getElementById('questions-input').value.trim();
+      let modelVal = document.getElementById('model-override-select').value;
+
+      let parsedState, parsedQuestions;
+      try {
+        parsedState = JSON.parse(stateVal);
+      } catch (e) {
+        parsedState = stateVal;
+      }
+
+      try {
+        parsedQuestions = JSON.parse(questionsVal);
+      } catch (e) {
+        alert("Error format JSON pertanyaan: " + e.message);
+        return;
+      }
+
+      btn.disabled = true;
+      spinner.classList.remove('hidden');
+      btnText.textContent = "Menjalankan Single Forward Pass (33ms)...";
+
+      const reqBody = {
+        state: parsedState,
+        questions: parsedQuestions
+      };
+      if (modelVal && modelVal !== 'auto') {
+        reqBody.model = modelVal;
+      }
+
+      try {
+        const res = await fetch('/api/v1/predict', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(activeApiKey ? { 'X-API-Key': activeApiKey } : {}),
+            ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
+          },
+          body: JSON.stringify(reqBody)
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          alert(`Request Gagal (${res.status}): ${data.detail || data.message || 'Error'}`);
+          return;
+        }
+        lastResultData = data;
+        renderResults(data);
+      } catch (err) {
+        alert("Gagal mengeksekusi: " + err.message);
+      } finally {
+        btn.disabled = false;
+        spinner.classList.add('hidden');
+        btnText.textContent = "⚡ Jalankan Decision Engine (1 Forward Pass)";
+      }
+    }
+
+    function renderResults(data) {
+      document.getElementById('raw-json-output').textContent = JSON.stringify(data, null, 2);
+      document.getElementById('stat-latency').textContent = `${data.latency_ms || 0} ms`;
+      document.getElementById('stat-model').textContent = data.routing?.model || 'english';
+      
+      const answers = data.answers || {};
+      const qKeys = Object.keys(answers);
+      document.getElementById('stat-qcount').textContent = qKeys.length;
+
+      const reasonBox = document.getElementById('routing-reason-box');
+      if (data.routing?.reason) {
+        reasonBox.classList.remove('hidden');
+        document.getElementById('routing-reason-text').textContent = `Routing: ${data.routing.reason}`;
+      } else {
+        reasonBox.classList.add('hidden');
+      }
+
+      const visualizer = document.getElementById('answers-visualizer');
+      visualizer.innerHTML = '';
+
+      if (qKeys.length === 0) {
+        visualizer.innerHTML = '<div class="text-slate-500 text-sm">Tidak ada jawaban yang dikembalikan.</div>';
+        return;
+      }
+
+      qKeys.forEach(qid => {
+        const ans = answers[qid];
+        const card = document.createElement('div');
+        card.className = 'p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-2.5';
+
+        let valDisplay = '';
+        let conf = ((ans.confidence || 0) * 100).toFixed(1);
+
+        if (ans.choice !== undefined) {
+          const isBool = typeof ans.choice === 'boolean';
+          const color = isBool ? (ans.choice ? 'text-emerald-400' : 'text-slate-400') : 'text-cyan-300';
+          const badgeBg = isBool ? (ans.choice ? 'bg-emerald-950 border-emerald-800' : 'bg-slate-900 border-slate-700') : 'bg-cyan-950 border-cyan-800';
+          valDisplay = `<span class="inline-block px-2.5 py-1 rounded-lg text-sm font-bold border ${color} ${badgeBg}">${ans.choice}</span>`;
+        } else if (ans.score !== undefined) {
+          valDisplay = `<span class="inline-block px-2.5 py-1 rounded-lg text-sm font-bold bg-amber-950 border border-amber-800 text-amber-400">Level ${ans.score}: ${ans.level || ''}</span>`;
+        }
+
+        let probsDetail = '';
+        if (ans.probs && typeof ans.probs === 'object' && !Array.isArray(ans.probs)) {
+          const pEntries = Object.entries(ans.probs);
+          probsDetail = `<div class="grid grid-cols-2 gap-1.5 pt-1 text-[11px] font-mono text-slate-400">` +
+            pEntries.map(([k, v]) => `<div>${k}: <b class="text-slate-200">${(v * 100).toFixed(1)}%</b></div>`).join('') +
+            `</div>`;
+        }
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">${qid}</span>
+            <div class="flex items-center space-x-1.5">
+              <span class="text-[11px] font-mono text-slate-400">Confidence:</span>
+              <span class="text-xs font-mono font-bold text-emerald-400">${conf}%</span>
+            </div>
+          </div>
+          <div>${valDisplay}</div>
+          <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-1.5 rounded-full" style="width: ${conf}%"></div>
+          </div>
+          ${probsDetail}
+        `;
+        visualizer.appendChild(card);
+      });
+
+      switchTab('visual');
+    }
+
+    // Modal Workflow Functions
+    function openNewWorkflowModal() {
+      document.getElementById('new-wf-error').classList.add('hidden');
+      document.getElementById('new-wf-name').value = '';
+      document.getElementById('new-wf-title').value = '';
+      document.getElementById('new-wf-desc').value = '';
+      document.getElementById('new-wf-state').value = '';
+      document.getElementById('new-wf-questions').value = '';
+      document.getElementById('new-workflow-modal').classList.remove('hidden');
+    }
+
+    function closeNewWorkflowModal() {
+      document.getElementById('new-workflow-modal').classList.add('hidden');
+    }
+
+    function insertSampleQuestions() {
+      document.getElementById('new-wf-name').value = 'ecommerce_fraud_scoring';
+      document.getElementById('new-wf-title').value = 'E-Commerce Fraud & Chargeback Risk';
+      document.getElementById('new-wf-desc').value = 'Deteksi otomatis order penipuan, anomali kartu, dan tingkat risiko.';
+      document.getElementById('new-wf-state').value = JSON.stringify({
+        "order_id": "ORD-9912",
+        "customer": "Budi",
+        "nominal": 15000000,
+        "lokasi_ip": "Nigeria",
+        "alamat_kirim": "Jakarta",
+        "catatan": "Pembelian 3 smartphone sekaligus dengan kartu baru"
+      }, null, 2);
+      document.getElementById('new-wf-questions').value = JSON.stringify({
+        "keputusan_order": {
+          "type": "choice",
+          "instructions": "Apa keputusan untuk transaksi order ini?",
+          "criteria": {
+            "approve": "transaksi aman dan wajar",
+            "manual_review": "transaksi mencurigakan butuh verifikasi telepon",
+            "reject": "terindikasi kuat penipuan atau pencurian kartu"
+          }
+        },
+        "skor_risiko": {
+          "type": "score",
+          "instructions": "Tingkat risiko transaksi:",
+          "criteria": ["rendah", "sedang", "tinggi", "sangat kritis"]
+        },
+        "butuh_verifikasi_ktp": {
+          "type": "noul",
+          "instructions": "Apakah order ini perlu meminta verifikasi foto KTP/identitas?"
+        }
+      }, null, 2);
+    }
+
+    async function saveNewWorkflow() {
+      const name = document.getElementById('new-wf-name').value.trim();
+      const title = document.getElementById('new-wf-title').value.trim();
+      const description = document.getElementById('new-wf-desc').value.trim();
+      const model = document.getElementById('new-wf-model').value;
+      const stateStr = document.getElementById('new-wf-state').value.trim();
+      const questionsStr = document.getElementById('new-wf-questions').value.trim();
+      const errEl = document.getElementById('new-wf-error');
+
+      errEl.classList.add('hidden');
+
+      if (!name || !title || !questionsStr) {
+        errEl.textContent = 'Harap isi ID Workflow, Judul, dan Questions JSON.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      let parsedState, parsedQuestions;
+      try {
+        parsedState = JSON.parse(stateStr);
+      } catch (e) {
+        parsedState = stateStr;
+      }
+
+      try {
+        parsedQuestions = JSON.parse(questionsStr);
+      } catch (e) {
+        errEl.textContent = 'Format JSON Questions tidak valid: ' + e.message;
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      const payload = {
+        name,
+        title,
+        description,
+        model,
+        example_state: parsedState,
+        questions: parsedQuestions
+      };
+
+      try {
+        const res = await fetch('/api/v1/workflows', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          closeNewWorkflowModal();
+          await loadPresets();
+          selectPreset(name);
+          alert(`Workflow "${title}" berhasil disimpan!`);
+        } else {
+          const errData = await res.json();
+          errEl.textContent = errData.detail || 'Gagal menyimpan workflow.';
+          errEl.classList.remove('hidden');
+        }
+      } catch (e) {
+        errEl.textContent = 'Error koneksi: ' + e.message;
+        errEl.classList.remove('hidden');
+      }
+    }
+
+    async function deleteCustomWorkflow(name, event) {
+      event.stopPropagation();
+      if (!confirm(`Apakah Anda yakin ingin menghapus workflow "${name}"?`)) return;
+
+      try {
+        const res = await fetch(`/api/v1/workflows/${name}`, {
+          method: 'DELETE',
+          headers: {
+            ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
+          }
+        });
+        if (res.ok) {
+          await loadPresets();
+        } else {
+          alert("Gagal menghapus workflow.");
+        }
+      } catch (e) {
+        alert("Error: " + e.message);
+      }
+    }
+
+    function openChangePasswordModal() {
+      document.getElementById('user-dropdown').classList.add('hidden');
+      document.getElementById('chpass-error').classList.add('hidden');
+      document.getElementById('chpass-success').classList.add('hidden');
+      document.getElementById('old-password').value = '';
+      document.getElementById('new-password').value = '';
+      document.getElementById('confirm-password').value = '';
+      document.getElementById('chpass-modal').classList.remove('hidden');
+    }
+
+    function closeChangePasswordModal() {
+      document.getElementById('chpass-modal').classList.add('hidden');
+    }
+
+    async function submitChangePassword() {
+      const old_password = document.getElementById('old-password').value;
+      const new_password = document.getElementById('new-password').value;
+      const confirm = document.getElementById('confirm-password').value;
+      const errEl = document.getElementById('chpass-error');
+      const succEl = document.getElementById('chpass-success');
+
+      errEl.classList.add('hidden');
+      succEl.classList.add('hidden');
+
+      if (new_password !== confirm) {
+        errEl.textContent = 'Konfirmasi password baru tidak cocok.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/v1/auth/change-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ old_password, new_password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          succEl.textContent = data.message || 'Password berhasil diubah.';
+          succEl.classList.remove('hidden');
+          setTimeout(() => { closeChangePasswordModal(); }, 1200);
+        } else {
+          errEl.textContent = data.detail || 'Gagal mengubah password.';
+          errEl.classList.remove('hidden');
+        }
+      } catch (e) {
+        errEl.textContent = 'Error: ' + e.message;
+        errEl.classList.remove('hidden');
+      }
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

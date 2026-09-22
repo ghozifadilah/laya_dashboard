@@ -1,0 +1,19 @@
+{
+  "protection_enabled": true,
+  "keys": {
+    "default_master_key": {
+      "id": "key_master_1",
+      "name": "Default Master Key",
+      "token": "laya_live_e27dfccf8ab5378aa71cd347a9a39ea42c4f6877",
+      "created_at": 1790044608.8111017,
+      "is_active": true
+    },
+    "key_6317f8edbe69": {
+      "id": "key_6317f8edbe69",
+      "name": "API Key Baru",
+      "token": "laya_live_58ff999e94f08dd516bb4a05050d4b7019be71ac",
+      "created_at": 1790044924.5043147,
+      "is_active": true
+    }
+  }
+}

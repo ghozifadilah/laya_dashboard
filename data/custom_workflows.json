@@ -1,0 +1,56 @@
+{
+  "workflows": {
+    "training_readiness": {
+      "name": "training_readiness",
+      "title": "Training Readiness",
+      "description": "Cek Restday",
+      "questions": {
+        "fatigue": {
+          "type": "score",
+          "instructions": "Seberapa besar tingkat kelelahan runner berdasarkan state yang diberikan?",
+          "criteria": {
+            "0": "Runner terlihat segar dan tidak menunjukkan tanda kelelahan.",
+            "1": "Runner menunjukkan kelelahan tinggi atau sangat lelah.",
+            "0.5": "Runner menunjukkan kelelahan ringan sampai sedang."
+          }
+        },
+        "recovery_needed": {
+          "type": "noul",
+          "instructions": "Apakah runner saat ini lebih membutuhkan recovery daripada latihan intensitas tinggi?"
+        },
+        "hard_workout_suitable": {
+          "type": "noul",
+          "instructions": "Apakah kondisi runner saat ini cocok untuk melakukan latihan intensitas tinggi seperti interval atau tempo?"
+        },
+        "workout_type": {
+          "type": "choice",
+          "instructions": "Apa jenis latihan yang sedang direncanakan atau dibicarakan?",
+          "criteria": {
+            "easy_run": "Easy run atau lari santai.",
+            "long_run": "Long run atau lari jarak jauh.",
+            "tempo": "Tempo run atau threshold training.",
+            "interval": "Interval atau speed workout.",
+            "recovery": "Recovery run.",
+            "rest": "Rest day atau tidak melakukan latihan.",
+            "unknown": "Tidak dapat ditentukan dari input."
+          }
+        }
+      },
+      "example_state": {
+        "recent_workout": {
+          "distance_km": 10,
+          "pace": "5:40/km",
+          "avg_heart_rate": 158
+        },
+        "days_since_last_workout": 1,
+        "planned_workout": "interval",
+        "runner_note": "Kaki masih agak berat setelah lari kemarin."
+      },
+      "model": "multilingual",
+      "created_by": "admin",
+      "created_at": 1790045312.850087,
+      "updated_at": 1790045312.850087,
+      "is_custom": true
+    }
+  }
+}
