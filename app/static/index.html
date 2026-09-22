@@ -1013,35 +1013,34 @@ print(response.json())`;
         const card = document.createElement('div');
         card.className = 'p-4 bg-slate-950/90 border border-slate-800/90 rounded-xl space-y-3 shadow-sm hover:border-slate-700/80 transition';
 
-        // Check if decision is NOUL / Binary Action Trigger
-        const isNoul = ans.type === 'noul' || ans.noul !== undefined || (ans.action && ans.action.act_probability !== undefined);
-        const isBooleanChoice = typeof ans.choice === 'boolean' || (typeof ans.choice === 'string' && ['true', 'false', 'yes', 'no'].includes(ans.choice.toLowerCase()));
+        // Strict decision type identification
+        const isNoul = ans.type === 'noul' || (ans.noul !== undefined && ans.type !== 'choice' && ans.type !== 'score');
+        const isScore = ans.type === 'score' || (ans.score !== undefined && ans.type !== 'choice' && ans.type !== 'noul');
+        const isBooleanChoice = typeof ans.choice === 'boolean' || (typeof ans.choice === 'string' && ['true', 'false', 'yes', 'no'].includes(ans.choice.toLowerCase()) && !ans.probabilities);
 
         let conf = ((ans.confidence !== undefined ? ans.confidence : 0) * 100).toFixed(1);
         let valDisplay = '';
         let metricsSection = '';
         let progressBar = '';
+        let probsDetail = '';
 
         if (isNoul) {
-          // NOUL Action / Trigger Decision
-          let noulVal = ans.noul !== undefined ? ans.noul : (ans.action && ans.action.act_probability !== undefined ? (1 - ans.action.act_probability) : 0.5);
-          let actProb = ans.noul !== undefined ? (1 - ans.noul) : (ans.action?.act_probability ?? (ans.choice === true ? 1 : 0));
+          // IN NOUL: ans.noul is p[1] (Probability of True / Yes)
+          const pTrue = ans.noul !== undefined ? ans.noul : (ans.choice === true ? 1 : 0);
+          const pFalse = Math.max(0, 1.0 - pTrue);
 
-          // When noul < 0.5, Null prob is low -> YES (Action approved)
-          // When noul >= 0.5, Null prob is high -> NO (No-op / Action rejected)
-          const isYes = ans.noul !== undefined ? (ans.noul < 0.5) : (actProb > 0.5 || ans.choice === true);
-
-          const actProbPct = (actProb * 100).toFixed(1) + '%';
-          const noulPct = (noulVal * 100).toFixed(1) + '%';
+          const isYes = pTrue >= 0.5;
+          const pTruePct = (pTrue * 100).toFixed(2) + '%';
+          const pFalsePct = (pFalse * 100).toFixed(2) + '%';
 
           if (isYes) {
             valDisplay = `
               <div class="flex items-center flex-wrap gap-2.5">
                 <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-sm font-black tracking-wide border bg-emerald-950/90 border-emerald-500/70 text-emerald-300 shadow-md shadow-emerald-950/60">
                   <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                  YES <span class="text-[10px] font-semibold text-emerald-400/80 uppercase tracking-widest bg-emerald-900/60 px-1.5 py-0.5 rounded">ACT</span>
+                  YES <span class="text-[10px] font-semibold text-emerald-400/80 uppercase tracking-widest bg-emerald-900/60 px-1.5 py-0.5 rounded">TRUE</span>
                 </span>
-                <span class="text-xs font-mono text-emerald-400/90 font-medium">Trigger Action Approved</span>
+                <span class="text-xs font-mono text-emerald-400/90 font-medium">Condition / Action Trigger Confirmed</span>
               </div>
             `;
           } else {
@@ -1049,9 +1048,9 @@ print(response.json())`;
               <div class="flex items-center flex-wrap gap-2.5">
                 <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-sm font-black tracking-wide border bg-rose-950/90 border-rose-500/70 text-rose-300 shadow-md shadow-rose-950/60">
                   <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
-                  NO <span class="text-[10px] font-semibold text-rose-400/80 uppercase tracking-widest bg-rose-900/60 px-1.5 py-0.5 rounded">NO-OP</span>
+                  NO <span class="text-[10px] font-semibold text-rose-400/80 uppercase tracking-widest bg-rose-900/60 px-1.5 py-0.5 rounded">FALSE</span>
                 </span>
-                <span class="text-xs font-mono text-slate-400 font-medium">No Action Required</span>
+                <span class="text-xs font-mono text-slate-400 font-medium">Condition Not Met (No Action)</span>
               </div>
             `;
           }
@@ -1060,12 +1059,12 @@ print(response.json())`;
           metricsSection = `
             <div class="grid grid-cols-3 gap-2 text-[11px] font-mono bg-slate-900/70 p-2.5 rounded-lg border border-slate-800">
               <div>
-                <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Act Probability</div>
-                <div class="font-bold text-xs mt-0.5 ${isYes ? 'text-emerald-400' : 'text-slate-400'}">${actProbPct}</div>
+                <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">P(True / YES)</div>
+                <div class="font-bold text-xs mt-0.5 ${isYes ? 'text-emerald-400' : 'text-slate-400'}">${pTruePct}</div>
               </div>
               <div>
-                <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">NOUL (Null Prob)</div>
-                <div class="font-bold text-xs mt-0.5 ${ans.noul > 0.5 ? 'text-rose-400' : 'text-slate-300'}">${noulPct}</div>
+                <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">P(False / NO)</div>
+                <div class="font-bold text-xs mt-0.5 ${!isYes ? 'text-rose-400' : 'text-slate-400'}">${pFalsePct}</div>
               </div>
               <div>
                 <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Confidence</div>
@@ -1074,21 +1073,105 @@ print(response.json())`;
             </div>
           `;
 
-          // Progress Bar: Act vs NOUL Ratio
-          const actBarPct = actProb !== undefined ? Math.min(100, Math.max(0, actProb <= 1 ? actProb * 100 : 100)) : (isYes ? 100 : 0);
-          const nullBarPct = 100 - actBarPct;
+          // Progress Bar: P(True) vs P(False)
+          const trueBarPct = Math.min(100, Math.max(0, pTrue * 100));
+          const falseBarPct = 100 - trueBarPct;
           progressBar = `
             <div class="space-y-1">
               <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden flex border border-slate-800">
-                <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-2 transition-all duration-500" style="width: ${actBarPct}%"></div>
-                <div class="bg-rose-500/50 h-2 transition-all duration-500" style="width: ${nullBarPct}%"></div>
+                <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-2 transition-all duration-500" style="width: ${trueBarPct}%"></div>
+                <div class="bg-rose-500/50 h-2 transition-all duration-500" style="width: ${falseBarPct}%"></div>
               </div>
               <div class="flex justify-between text-[10px] font-mono text-slate-500">
-                <span>Act: ${actProbPct}</span>
-                <span>Null (NOUL): ${noulPct}</span>
+                <span class="${isYes ? 'text-emerald-400 font-bold' : ''}">True (YES): ${pTruePct}</span>
+                <span class="${!isYes ? 'text-rose-400 font-bold' : ''}">False (NO): ${pFalsePct}</span>
               </div>
             </div>
           `;
+
+        } else if (isScore) {
+          // SCORE DECISION (Continuous level expectation & rubric distribution)
+          const scoreVal = typeof ans.score === 'number' ? ans.score : parseFloat(ans.score);
+          const formattedScore = !isNaN(scoreVal) ? (scoreVal % 1 !== 0 ? scoreVal.toFixed(2) : scoreVal) : ans.score;
+          
+          const rawProbs = ans.probs || ans.probabilities || {};
+          const legend = ans.legend || {};
+          const probEntries = Array.isArray(rawProbs) 
+            ? rawProbs.map((p, i) => [String(i), p]) 
+            : Object.entries(rawProbs);
+
+          // Find the dominant level
+          let topLevelIdx = Math.round(scoreVal);
+          let highestProb = -1;
+          let highestLevel = String(topLevelIdx);
+          probEntries.forEach(([lvl, p]) => {
+            if (p > highestProb) {
+              highestProb = p;
+              highestLevel = lvl;
+            }
+          });
+
+          const levelDesc = legend[highestLevel] || legend[String(topLevelIdx)] || ans.level || `Level ${highestLevel}`;
+          
+          const maxLevel = Math.max(1, probEntries.length - 1);
+          const scoreRatio = !isNaN(scoreVal) ? (scoreVal / maxLevel) : 0;
+          let badgeColor = 'bg-emerald-950/90 border-emerald-500/70 text-emerald-300';
+          let severityTag = 'Low / Normal';
+          if (scoreRatio >= 0.66) {
+            badgeColor = 'bg-rose-950/90 border-rose-500/70 text-rose-300 shadow-md shadow-rose-950/60';
+            severityTag = 'High / Critical';
+          } else if (scoreRatio >= 0.33) {
+            badgeColor = 'bg-amber-950/90 border-amber-500/70 text-amber-300 shadow-md shadow-amber-950/60';
+            severityTag = 'Moderate / Elevated';
+          }
+
+          let pZero = rawProbs['0'] !== undefined ? rawProbs['0'] : (Array.isArray(rawProbs) ? rawProbs[0] : 0);
+          let pElevated = Math.max(0, 1.0 - (pZero || 0));
+
+          valDisplay = `
+            <div class="flex items-center flex-wrap gap-2.5">
+              <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-sm font-black tracking-wide border ${badgeColor}">
+                Score: ${formattedScore} / ${maxLevel} <span class="text-[10px] font-semibold uppercase tracking-widest bg-black/40 px-1.5 py-0.5 rounded">${severityTag}</span>
+              </span>
+              <span class="text-xs font-mono text-slate-300 font-medium truncate max-w-full">
+                Dominant: <b class="text-white">${levelDesc}</b>
+              </span>
+            </div>
+          `;
+
+          if (probEntries.length > 0) {
+            probsDetail = `
+              <div class="space-y-1.5 pt-2">
+                <div class="flex justify-between items-center text-[10px] font-mono text-slate-400 font-semibold uppercase tracking-wider">
+                  <span>Level Probability Distribution</span>
+                  ${pElevated > 0.5 && probEntries.length > 2 ? `<span class="text-rose-400 font-bold">Total Elevated (L1+): ${(pElevated * 100).toFixed(1)}%</span>` : ''}
+                </div>
+                <div class="space-y-1.5">
+                  ${probEntries.map(([lvl, p]) => {
+                    const pPct = (p * 100).toFixed(2);
+                    const isTop = lvl === highestLevel;
+                    const desc = legend[lvl] || `Level ${lvl}`;
+                    const barColor = isTop 
+                      ? (scoreRatio >= 0.66 ? 'bg-gradient-to-r from-rose-500 to-amber-500' : 'bg-gradient-to-r from-amber-500 to-emerald-400') 
+                      : 'bg-slate-700';
+                    return `
+                      <div class="bg-slate-900/60 p-2 rounded-lg border ${isTop ? 'border-slate-700 ring-1 ring-emerald-500/20' : 'border-slate-800/60'}">
+                        <div class="flex justify-between text-[11px] font-mono mb-1">
+                          <span class="${isTop ? 'text-white font-bold' : 'text-slate-400'} truncate mr-2">
+                            ${isTop ? '★ ' : ''}<b>[L${lvl}]</b> ${desc}
+                          </span>
+                          <span class="${isTop ? 'text-emerald-400 font-bold' : 'text-slate-400'} shrink-0">${pPct}%</span>
+                        </div>
+                        <div class="w-full bg-slate-800/80 rounded-full h-1.5 overflow-hidden">
+                          <div class="${barColor} h-1.5 rounded-full transition-all duration-500" style="width: ${Math.max(0, Math.min(100, parseFloat(pPct)))}%"></div>
+                        </div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            `;
+          }
 
         } else if (isBooleanChoice) {
           // Standard Boolean YES / NO choice
@@ -1116,41 +1199,52 @@ print(response.json())`;
             </div>
           `;
 
-        } else if (ans.score !== undefined) {
-          // Score / Rating (e.g. Low, Medium, High, Critical or continuous score)
-          const formattedScore = typeof ans.score === 'number' && ans.score % 1 !== 0 ? ans.score.toFixed(2) : ans.score;
-          valDisplay = `<span class="inline-block px-3 py-1.5 rounded-xl text-sm font-bold bg-amber-950/80 border border-amber-500/50 text-amber-300 shadow-sm shadow-amber-950">Score: ${formattedScore}${ans.level ? ` (${ans.level})` : ''}</span>`;
-          progressBar = `
-            <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden border border-slate-800">
-              <div class="bg-gradient-to-r from-amber-500 to-yellow-400 h-1.5 rounded-full" style="width: ${conf}%"></div>
-            </div>
-          `;
-
-        } else if (ans.choice !== undefined) {
-          // Categorical Choice
-          valDisplay = `<span class="inline-block px-3 py-1.5 rounded-xl text-sm font-bold border border-cyan-500/50 bg-cyan-950/80 text-cyan-300 shadow-sm shadow-cyan-950">${ans.choice}</span>`;
-          progressBar = `
-            <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden border border-slate-800">
-              <div class="bg-gradient-to-r from-cyan-500 to-teal-400 h-1.5 rounded-full" style="width: ${conf}%"></div>
-            </div>
-          `;
         } else {
-          // Generic output
-          valDisplay = `<pre class="text-xs font-mono text-slate-300 bg-slate-900 p-2 rounded">${JSON.stringify(ans, null, 2)}</pre>`;
-        }
+          // CATEGORICAL MULTI-CHOICE DECISION (e.g. refund, billing, technical, etc.)
+          const rawProbs = ans.probs || ans.probabilities || {};
+          const probEntries = Object.entries(rawProbs);
+          const topChoice = String(ans.choice || (probEntries.length > 0 ? probEntries[0][0] : 'Selected'));
+          const topProb = rawProbs[topChoice] !== undefined ? (rawProbs[topChoice] * 100).toFixed(2) + '%' : `${conf}%`;
 
-        let probsDetail = '';
-        const rawProbs = ans.probs || ans.probabilities;
-        if (rawProbs && typeof rawProbs === 'object') {
-          if (!Array.isArray(rawProbs)) {
-            const pEntries = Object.entries(rawProbs);
-            probsDetail = `<div class="grid grid-cols-2 gap-1.5 pt-1 text-[11px] font-mono text-slate-400 bg-slate-900/40 p-2 rounded-lg border border-slate-800/60">` +
-              pEntries.map(([k, v]) => `<div>${k}: <b class="text-slate-200">${(v * 100).toFixed(1)}%</b></div>`).join('') +
-              `</div>`;
-          } else if (Array.isArray(rawProbs) && rawProbs.length > 0) {
-            probsDetail = `<div class="flex flex-wrap gap-2 pt-1 text-[11px] font-mono text-slate-400">` +
-              rawProbs.map((p, idx) => `<span class="bg-slate-900 px-2 py-0.5 rounded border border-slate-800">L${idx}: <b class="text-slate-200">${(p * 100).toFixed(1)}%</b></span>`).join('') +
-              `</div>`;
+          valDisplay = `
+            <div class="flex items-center flex-wrap gap-2.5">
+              <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-sm font-black tracking-wide border border-cyan-500/70 bg-cyan-950/90 text-cyan-300 shadow-md shadow-cyan-950/60">
+                <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                ${topChoice} <span class="text-[10px] font-semibold text-cyan-400/80 uppercase tracking-widest bg-cyan-900/60 px-1.5 py-0.5 rounded">${topProb}</span>
+              </span>
+              <span class="text-xs font-mono text-cyan-400/90 font-medium">Selected Category</span>
+            </div>
+          `;
+
+          if (probEntries.length > 0) {
+            probsDetail = `
+              <div class="space-y-1.5 pt-2">
+                <div class="text-[10px] font-mono text-slate-400 font-semibold uppercase tracking-wider flex justify-between">
+                  <span>Choice Probabilities</span>
+                  <span class="text-cyan-400">${probEntries.length} Options</span>
+                </div>
+                <div class="space-y-1.5">
+                  ${probEntries.map(([opt, p]) => {
+                    const pPct = typeof p === 'number' ? (p * 100).toFixed(2) : parseFloat(p).toFixed(2);
+                    const isWinner = opt === topChoice;
+                    const barColor = isWinner ? 'bg-gradient-to-r from-cyan-500 to-emerald-400' : 'bg-slate-700';
+                    return `
+                      <div class="bg-slate-900/60 p-2 rounded-lg border ${isWinner ? 'border-cyan-700/60 ring-1 ring-cyan-500/20' : 'border-slate-800/60'}">
+                        <div class="flex justify-between text-[11px] font-mono mb-1">
+                          <span class="${isWinner ? 'text-cyan-200 font-bold' : 'text-slate-400'} truncate mr-2">
+                            ${isWinner ? '✔ ' : ''}${opt}
+                          </span>
+                          <span class="${isWinner ? 'text-cyan-300 font-bold' : 'text-slate-400'} shrink-0">${pPct}%</span>
+                        </div>
+                        <div class="w-full bg-slate-800/80 rounded-full h-1.5 overflow-hidden">
+                          <div class="${barColor} h-1.5 rounded-full transition-all duration-500" style="width: ${Math.max(0, Math.min(100, parseFloat(pPct)))}%"></div>
+                        </div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            `;
           }
         }
 

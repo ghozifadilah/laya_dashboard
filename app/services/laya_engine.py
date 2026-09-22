@@ -256,7 +256,7 @@ class LayaEngine:
                     for w in ["refund", "cancel", "threat", "hack", "urgent", "broken", "duplicate", "dispute", "password", "ignore", "secret", "run", "tomorrow", "intensity", "exercise"]
                 )
                 act_prob = 1 if is_true else 0
-                noul_val = round(0.12 if is_true else 0.88, 4)
+                noul_val = round(0.88 if is_true else 0.12, 4)
                 conf = 0.88
                 answers[q_id] = {
                     "type": "noul",
