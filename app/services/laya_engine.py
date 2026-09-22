@@ -253,13 +253,19 @@ class LayaEngine:
             elif q_type == "noul":
                 is_true = any(
                     w in state_str
-                    for w in ["refund", "cancel", "threat", "hack", "urgent", "broken", "duplicate", "dispute", "password", "ignore", "secret"]
+                    for w in ["refund", "cancel", "threat", "hack", "urgent", "broken", "duplicate", "dispute", "password", "ignore", "secret", "run", "tomorrow", "intensity", "exercise"]
                 )
-                prob = 0.88 if is_true else 0.12
+                act_prob = 1 if is_true else 0
+                noul_val = round(0.12 if is_true else 0.88, 4)
+                conf = 0.88
                 answers[q_id] = {
+                    "type": "noul",
                     "choice": is_true,
-                    "probability": prob,
-                    "confidence": prob if is_true else (1.0 - prob),
+                    "noul": noul_val,
+                    "confidence": conf,
+                    "action": {
+                        "act_probability": act_prob
+                    },
                 }
 
         latency_ms = round((time.perf_counter() - start_time) * 1000, 2)

@@ -1011,40 +1011,163 @@ print(response.json())`;
       qKeys.forEach(qid => {
         const ans = answers[qid];
         const card = document.createElement('div');
-        card.className = 'p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-2.5';
+        card.className = 'p-4 bg-slate-950/90 border border-slate-800/90 rounded-xl space-y-3 shadow-sm hover:border-slate-700/80 transition';
 
+        // Check if decision is NOUL / Binary Action Trigger
+        const isNoul = ans.type === 'noul' || ans.noul !== undefined || (ans.action && ans.action.act_probability !== undefined);
+        const isBooleanChoice = typeof ans.choice === 'boolean' || (typeof ans.choice === 'string' && ['true', 'false', 'yes', 'no'].includes(ans.choice.toLowerCase()));
+
+        let conf = ((ans.confidence !== undefined ? ans.confidence : 0) * 100).toFixed(1);
         let valDisplay = '';
-        let conf = ((ans.confidence || 0) * 100).toFixed(1);
+        let metricsSection = '';
+        let progressBar = '';
 
-        if (ans.choice !== undefined) {
-          const isBool = typeof ans.choice === 'boolean';
-          const color = isBool ? (ans.choice ? 'text-emerald-400' : 'text-slate-400') : 'text-cyan-300';
-          const badgeBg = isBool ? (ans.choice ? 'bg-emerald-950 border-emerald-800' : 'bg-slate-900 border-slate-700') : 'bg-cyan-950 border-cyan-800';
-          valDisplay = `<span class="inline-block px-2.5 py-1 rounded-lg text-sm font-bold border ${color} ${badgeBg}">${ans.choice}</span>`;
+        if (isNoul) {
+          // NOUL Action / Trigger Decision
+          let noulVal = ans.noul !== undefined ? ans.noul : (ans.action && ans.action.act_probability !== undefined ? (1 - ans.action.act_probability) : 0.5);
+          let actProb = ans.noul !== undefined ? (1 - ans.noul) : (ans.action?.act_probability ?? (ans.choice === true ? 1 : 0));
+
+          // When noul < 0.5, Null prob is low -> YES (Action approved)
+          // When noul >= 0.5, Null prob is high -> NO (No-op / Action rejected)
+          const isYes = ans.noul !== undefined ? (ans.noul < 0.5) : (actProb > 0.5 || ans.choice === true);
+
+          const actProbPct = (actProb * 100).toFixed(1) + '%';
+          const noulPct = (noulVal * 100).toFixed(1) + '%';
+
+          if (isYes) {
+            valDisplay = `
+              <div class="flex items-center flex-wrap gap-2.5">
+                <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-sm font-black tracking-wide border bg-emerald-950/90 border-emerald-500/70 text-emerald-300 shadow-md shadow-emerald-950/60">
+                  <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                  YES <span class="text-[10px] font-semibold text-emerald-400/80 uppercase tracking-widest bg-emerald-900/60 px-1.5 py-0.5 rounded">ACT</span>
+                </span>
+                <span class="text-xs font-mono text-emerald-400/90 font-medium">Trigger Action Approved</span>
+              </div>
+            `;
+          } else {
+            valDisplay = `
+              <div class="flex items-center flex-wrap gap-2.5">
+                <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-sm font-black tracking-wide border bg-rose-950/90 border-rose-500/70 text-rose-300 shadow-md shadow-rose-950/60">
+                  <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                  NO <span class="text-[10px] font-semibold text-rose-400/80 uppercase tracking-widest bg-rose-900/60 px-1.5 py-0.5 rounded">NO-OP</span>
+                </span>
+                <span class="text-xs font-mono text-slate-400 font-medium">No Action Required</span>
+              </div>
+            `;
+          }
+
+          // NOUL Metric Breakdown
+          metricsSection = `
+            <div class="grid grid-cols-3 gap-2 text-[11px] font-mono bg-slate-900/70 p-2.5 rounded-lg border border-slate-800">
+              <div>
+                <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Act Probability</div>
+                <div class="font-bold text-xs mt-0.5 ${isYes ? 'text-emerald-400' : 'text-slate-400'}">${actProbPct}</div>
+              </div>
+              <div>
+                <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">NOUL (Null Prob)</div>
+                <div class="font-bold text-xs mt-0.5 ${ans.noul > 0.5 ? 'text-rose-400' : 'text-slate-300'}">${noulPct}</div>
+              </div>
+              <div>
+                <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Confidence</div>
+                <div class="font-bold text-xs mt-0.5 text-emerald-400">${conf}%</div>
+              </div>
+            </div>
+          `;
+
+          // Progress Bar: Act vs NOUL Ratio
+          const actBarPct = actProb !== undefined ? Math.min(100, Math.max(0, actProb <= 1 ? actProb * 100 : 100)) : (isYes ? 100 : 0);
+          const nullBarPct = 100 - actBarPct;
+          progressBar = `
+            <div class="space-y-1">
+              <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden flex border border-slate-800">
+                <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-2 transition-all duration-500" style="width: ${actBarPct}%"></div>
+                <div class="bg-rose-500/50 h-2 transition-all duration-500" style="width: ${nullBarPct}%"></div>
+              </div>
+              <div class="flex justify-between text-[10px] font-mono text-slate-500">
+                <span>Act: ${actProbPct}</span>
+                <span>Null (NOUL): ${noulPct}</span>
+              </div>
+            </div>
+          `;
+
+        } else if (isBooleanChoice) {
+          // Standard Boolean YES / NO choice
+          const isYes = ans.choice === true || String(ans.choice).toLowerCase() === 'yes' || String(ans.choice).toLowerCase() === 'true';
+          const badgeClass = isYes 
+            ? 'bg-emerald-950/90 border-emerald-500/70 text-emerald-300 shadow-md shadow-emerald-950/60' 
+            : 'bg-rose-950/90 border-rose-500/70 text-rose-300 shadow-md shadow-rose-950/60';
+          const icon = isYes 
+            ? '<svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>'
+            : '<svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>';
+
+          valDisplay = `
+            <div class="flex items-center gap-2.5">
+              <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-sm font-black tracking-wide border ${badgeClass}">
+                ${icon}
+                ${isYes ? 'YES' : 'NO'}
+              </span>
+              <span class="text-xs font-mono text-slate-400">Value: <b class="text-slate-200">${ans.choice}</b></span>
+            </div>
+          `;
+
+          progressBar = `
+            <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden border border-slate-800">
+              <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-1.5 rounded-full" style="width: ${conf}%"></div>
+            </div>
+          `;
+
         } else if (ans.score !== undefined) {
-          valDisplay = `<span class="inline-block px-2.5 py-1 rounded-lg text-sm font-bold bg-amber-950 border border-amber-800 text-amber-400">Level ${ans.score}: ${ans.level || ''}</span>`;
+          // Score / Rating (e.g. Low, Medium, High, Critical or continuous score)
+          const formattedScore = typeof ans.score === 'number' && ans.score % 1 !== 0 ? ans.score.toFixed(2) : ans.score;
+          valDisplay = `<span class="inline-block px-3 py-1.5 rounded-xl text-sm font-bold bg-amber-950/80 border border-amber-500/50 text-amber-300 shadow-sm shadow-amber-950">Score: ${formattedScore}${ans.level ? ` (${ans.level})` : ''}</span>`;
+          progressBar = `
+            <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden border border-slate-800">
+              <div class="bg-gradient-to-r from-amber-500 to-yellow-400 h-1.5 rounded-full" style="width: ${conf}%"></div>
+            </div>
+          `;
+
+        } else if (ans.choice !== undefined) {
+          // Categorical Choice
+          valDisplay = `<span class="inline-block px-3 py-1.5 rounded-xl text-sm font-bold border border-cyan-500/50 bg-cyan-950/80 text-cyan-300 shadow-sm shadow-cyan-950">${ans.choice}</span>`;
+          progressBar = `
+            <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden border border-slate-800">
+              <div class="bg-gradient-to-r from-cyan-500 to-teal-400 h-1.5 rounded-full" style="width: ${conf}%"></div>
+            </div>
+          `;
+        } else {
+          // Generic output
+          valDisplay = `<pre class="text-xs font-mono text-slate-300 bg-slate-900 p-2 rounded">${JSON.stringify(ans, null, 2)}</pre>`;
         }
 
         let probsDetail = '';
-        if (ans.probs && typeof ans.probs === 'object' && !Array.isArray(ans.probs)) {
-          const pEntries = Object.entries(ans.probs);
-          probsDetail = `<div class="grid grid-cols-2 gap-1.5 pt-1 text-[11px] font-mono text-slate-400">` +
-            pEntries.map(([k, v]) => `<div>${k}: <b class="text-slate-200">${(v * 100).toFixed(1)}%</b></div>`).join('') +
-            `</div>`;
+        const rawProbs = ans.probs || ans.probabilities;
+        if (rawProbs && typeof rawProbs === 'object') {
+          if (!Array.isArray(rawProbs)) {
+            const pEntries = Object.entries(rawProbs);
+            probsDetail = `<div class="grid grid-cols-2 gap-1.5 pt-1 text-[11px] font-mono text-slate-400 bg-slate-900/40 p-2 rounded-lg border border-slate-800/60">` +
+              pEntries.map(([k, v]) => `<div>${k}: <b class="text-slate-200">${(v * 100).toFixed(1)}%</b></div>`).join('') +
+              `</div>`;
+          } else if (Array.isArray(rawProbs) && rawProbs.length > 0) {
+            probsDetail = `<div class="flex flex-wrap gap-2 pt-1 text-[11px] font-mono text-slate-400">` +
+              rawProbs.map((p, idx) => `<span class="bg-slate-900 px-2 py-0.5 rounded border border-slate-800">L${idx}: <b class="text-slate-200">${(p * 100).toFixed(1)}%</b></span>`).join('') +
+              `</div>`;
+          }
         }
 
         card.innerHTML = `
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">${qid}</span>
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-2">
+            <div class="flex items-center space-x-2">
+              <span class="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">${qid}</span>
+              ${ans.type ? `<span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 border border-slate-700">${ans.type}</span>` : ''}
+            </div>
             <div class="flex items-center space-x-1.5">
               <span class="text-[11px] font-mono text-slate-400">Confidence:</span>
               <span class="text-xs font-mono font-bold text-emerald-400">${conf}%</span>
             </div>
           </div>
           <div>${valDisplay}</div>
-          <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
-            <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-1.5 rounded-full" style="width: ${conf}%"></div>
-          </div>
+          ${metricsSection}
+          ${progressBar}
           ${probsDetail}
         `;
         visualizer.appendChild(card);
