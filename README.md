@@ -5,7 +5,7 @@
 [![Laya](https://img.shields.io/badge/Laya-System%201%20Engine-emerald.svg)](https://github.com/NandhaKishorM/laya)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
 
-High-performance, enterprise-ready REST API backend and interactive Web Studio for **[Laya](https://github.com/NandhaKishorM/laya)** — Multilingual, non-autoregressive System 1 decision engine. Delivers typed decisions over 100+ languages in a single forward pass (**sub-35ms latency**) with calibrated probabilities, intelligent script routing, visual custom workflow creation, live cURL preview, user authentication, and API Key token protection.
+REST API backend and interactive Web Studio for **[Laya](https://github.com/NandhaKishorM/laya)** .
 
 ---
 
