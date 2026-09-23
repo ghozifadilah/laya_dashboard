@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Laya Decision Studio - Enterprise Decision Engine</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -51,7 +52,7 @@
           LAYA DECISION STUDIO
         </h1>
         <p class="text-xs text-slate-400 max-w-xs mx-auto">
-          Non-Autoregressive System 1 Fast Decision Engine. Silakan login untuk mengelola workflow.
+          Non-Autoregressive System 1 Fast Decision Engine. Sign in to manage decision workflows.
         </p>
       </div>
 
@@ -59,10 +60,10 @@
       <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-7 shadow-2xl backdrop-blur space-y-5">
         
         <!-- Default Credentials Notice -->
-        <div class="p-3 bg-emerald-950/70 border border-emerald-800/80 rounded-xl text-xs text-emerald-300 flex items-start space-x-2">
-          <span class="text-base">💡</span>
+        <div class="p-3 bg-emerald-950/70 border border-emerald-800/80 rounded-xl text-xs text-emerald-300 flex items-start space-x-2.5">
+          <i class="fa-solid fa-circle-info text-emerald-400 text-sm mt-0.5"></i>
           <div>
-            <span class="font-bold">Default Akun:</span><br>
+            <span class="font-bold">Default Credentials:</span><br>
             Username: <code class="font-bold text-white bg-slate-900 px-1 py-0.5 rounded">admin</code> | 
             Password: <code class="font-bold text-white bg-slate-900 px-1 py-0.5 rounded">admin123</code>
           </div>
@@ -73,14 +74,14 @@
             <label class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1.5">Username</label>
             <input type="text" id="login-username" value="admin" required autocomplete="username"
               class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-3 text-sm text-slate-200 font-mono outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition placeholder:text-slate-600"
-              placeholder="Masukkan username...">
+              placeholder="Enter username...">
           </div>
 
           <div>
             <label class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1.5">Password</label>
             <input type="password" id="login-password" value="admin123" required autocomplete="current-password"
               class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-3 text-sm text-slate-200 font-mono outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition placeholder:text-slate-600"
-              placeholder="Masukkan password...">
+              placeholder="Enter password...">
           </div>
 
           <div id="login-error" class="hidden p-3 bg-red-950/80 border border-red-800/80 rounded-xl text-xs text-red-300 font-medium"></div>
@@ -90,7 +91,8 @@
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
             </svg>
-            <span id="login-btn-text">Masuk ke Studio</span>
+            <i class="fa-solid fa-right-to-bracket text-xs"></i>
+            <span id="login-btn-text">Sign In to Studio</span>
           </button>
         </form>
 
@@ -127,8 +129,8 @@
         <div class="flex items-center space-x-3">
           <!-- API Keys Token Manager Button -->
           <button onclick="openApiTokensModal()" class="flex items-center space-x-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-600/50 transition shadow-sm">
-            <span>🔑</span>
-            <span>API Tokens</span>
+            <i class="fa-solid fa-key text-emerald-400 text-xs"></i>
+            <span>API Keys</span>
             <span id="nav-key-badge" class="ml-1 text-[10px] bg-emerald-800 text-emerald-100 px-1.5 py-0.2 rounded-full font-mono">0</span>
           </button>
 
@@ -139,30 +141,34 @@
           </div>
 
           <!-- Docs link -->
-          <a href="/docs" target="_blank" class="hidden sm:inline-flex text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition items-center space-x-1">
+          <a href="/docs" target="_blank" class="hidden sm:inline-flex text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition items-center space-x-1.5">
+            <i class="fa-solid fa-book text-slate-400 text-xs"></i>
             <span>Docs</span>
-            <span class="text-slate-400">↗</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500"></i>
           </a>
 
           <!-- User Menu Dropdown -->
           <div class="relative inline-block text-left">
-            <button onclick="toggleUserDropdown()" class="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+            <button onclick="toggleUserDropdown(event)" class="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
               <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
               <span id="user-display-name">admin</span>
-              <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+              <i class="fa-solid fa-chevron-down text-slate-400 text-[10px]"></i>
             </button>
             <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-52 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl py-1.5 z-50">
               <div class="px-3.5 py-2 border-b border-slate-800 text-[11px] text-slate-400">
-                Masuk sebagai <b id="user-dropdown-role" class="text-emerald-400">ADMIN</b>
+                Signed in as <b id="user-dropdown-role" class="text-emerald-400">ADMIN</b>
               </div>
-              <button onclick="openApiTokensModal()" class="w-full text-left px-3.5 py-2 text-xs text-slate-300 hover:bg-slate-800 hover:text-white transition">
-                🔑 Kelola API Tokens
+              <button onclick="openApiTokensModal()" class="w-full text-left px-3.5 py-2 text-xs text-slate-300 hover:bg-slate-800 hover:text-white transition flex items-center space-x-2">
+                <i class="fa-solid fa-key text-emerald-400 text-xs w-4"></i>
+                <span>Manage API Keys</span>
               </button>
-              <button onclick="openChangePasswordModal()" class="w-full text-left px-3.5 py-2 text-xs text-slate-300 hover:bg-slate-800 hover:text-white transition">
-                🔒 Ganti Password
+              <button onclick="openChangePasswordModal()" class="w-full text-left px-3.5 py-2 text-xs text-slate-300 hover:bg-slate-800 hover:text-white transition flex items-center space-x-2">
+                <i class="fa-solid fa-lock text-slate-400 text-xs w-4"></i>
+                <span>Change Password</span>
               </button>
-              <button onclick="logout()" class="w-full text-left px-3.5 py-2 text-xs text-red-400 hover:bg-slate-800 transition border-t border-slate-800/80">
-                🚪 Logout
+              <button onclick="logout()" class="w-full text-left px-3.5 py-2 text-xs text-red-400 hover:bg-slate-800 transition border-t border-slate-800/80 flex items-center space-x-2">
+                <i class="fa-solid fa-arrow-right-from-bracket text-red-400 text-xs w-4"></i>
+                <span>Logout</span>
               </button>
             </div>
           </div>
@@ -185,12 +191,12 @@
               <span id="workflow-count-badge" class="text-[11px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full font-mono">0</span>
             </div>
             <button onclick="openNewWorkflowModal()" class="text-xs font-bold px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-lg shadow-md transition flex items-center space-x-1.5">
-              <span>+</span>
-              <span>Workflow Baru</span>
+              <i class="fa-solid fa-plus text-xs"></i>
+              <span>New Workflow</span>
             </button>
           </div>
           
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1" id="presets-container">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-56 overflow-y-auto pr-1" id="presets-container">
             <!-- Loaded dynamically -->
           </div>
         </div>
@@ -203,26 +209,33 @@
               Detected: <span class="text-emerald-400">English (latin)</span>
             </div>
           </div>
-          <textarea id="state-input" rows="5" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs text-slate-200 font-mono focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition resize-y" placeholder="Masukkan teks keluhan, tiket, email, atau JSON..."></textarea>
+          <textarea id="state-input" rows="5" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs text-slate-200 font-mono focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition resize-y" placeholder="Enter state text, ticket, email, or JSON object..."></textarea>
         </div>
 
         <!-- Questions Schema Card -->
         <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between flex-wrap gap-2">
             <div class="flex items-center space-x-2">
               <label class="text-xs font-bold uppercase tracking-wider text-slate-400">2. Questions Schema (JSON)</label>
             </div>
-            <div class="flex items-center space-x-3 text-xs">
-              <select id="model-override-select" onchange="updateCurlPreview()" class="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1 text-slate-300 font-mono outline-none focus:border-emerald-500">
+            <div class="flex items-center space-x-2 text-xs">
+              <select id="model-override-select" onchange="updateCurlPreview()" class="bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-slate-300 font-mono outline-none focus:border-emerald-500">
                 <option value="auto">Model: Auto Router</option>
                 <option value="english">Model: English (ModernBERT)</option>
                 <option value="multilingual">Model: Multilingual (100+ langs)</option>
                 <option value="typed-decisions">Model: Typed-Decisions</option>
               </select>
-              <button onclick="formatQuestionsJSON()" class="text-slate-400 hover:text-slate-200 font-mono underline">Format</button>
+              <button onclick="formatQuestionsJSON()" class="text-slate-400 hover:text-slate-200 font-mono flex items-center space-x-1 text-xs px-1.5 py-0.5 rounded hover:bg-slate-800 transition">
+                <i class="fa-solid fa-code text-[11px]"></i>
+                <span>Format</span>
+              </button>
+              <button id="quick-save-btn" onclick="quickSaveActiveWorkflow()" class="px-3 py-1 bg-emerald-950/90 hover:bg-emerald-900 border border-emerald-600/70 text-emerald-300 rounded-lg font-semibold flex items-center space-x-1.5 transition text-xs shadow-sm" title="Save changes to this workflow permanently">
+                <i class="fa-solid fa-floppy-disk text-xs"></i>
+                <span id="quick-save-btn-label">Save Workflow</span>
+              </button>
             </div>
           </div>
-          <textarea id="questions-input" rows="8" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs text-slate-200 font-mono focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition resize-y" placeholder="JSON schema pertanyaan..."></textarea>
+          <textarea id="questions-input" rows="8" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs text-slate-200 font-mono focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition resize-y" placeholder="Enter JSON questions schema..."></textarea>
         </div>
 
         <!-- Action Button -->
@@ -231,7 +244,8 @@
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
           </svg>
-          <span id="btn-text">⚡ Jalankan Decision Engine (1 Forward Pass)</span>
+          <i class="fa-solid fa-bolt text-sm"></i>
+          <span id="btn-text">Run Decision Engine (1 Forward Pass)</span>
         </button>
 
       </div>
@@ -261,21 +275,26 @@
           <!-- Tabs Header -->
           <div class="flex items-center justify-between border-b border-slate-800 pb-3">
             <div class="flex space-x-1 sm:space-x-2" id="output-tabs">
-              <button onclick="switchTab('visual')" id="tab-visual" class="px-3 py-1.5 rounded-lg text-xs font-bold transition bg-emerald-950 text-emerald-300 border border-emerald-500/40">
-                📊 Decision Results
+              <button onclick="switchTab('visual')" id="tab-visual" class="px-3 py-1.5 rounded-lg text-xs font-bold transition bg-emerald-950 text-emerald-300 border border-emerald-500/40 flex items-center space-x-1.5">
+                <i class="fa-solid fa-chart-pie text-xs"></i>
+                <span>Decision Results</span>
               </button>
-              <button onclick="switchTab('curl')" id="tab-curl" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition">
-                cURL Preview
+              <button onclick="switchTab('curl')" id="tab-curl" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition flex items-center space-x-1.5">
+                <i class="fa-solid fa-terminal text-xs"></i>
+                <span>cURL Preview</span>
               </button>
-              <button onclick="switchTab('python')" id="tab-python" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition">
-                Python
+              <button onclick="switchTab('python')" id="tab-python" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition flex items-center space-x-1.5">
+                <i class="fa-brands fa-python text-xs"></i>
+                <span>Python</span>
               </button>
-              <button onclick="switchTab('json')" id="tab-json" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition">
-                Raw JSON
+              <button onclick="switchTab('json')" id="tab-json" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition flex items-center space-x-1.5">
+                <i class="fa-solid fa-code text-xs"></i>
+                <span>Raw JSON</span>
               </button>
             </div>
-            <button onclick="copyCurrentTabContent()" class="text-xs text-slate-400 hover:text-emerald-400 font-mono flex items-center space-x-1">
-              <span>📋 Copy</span>
+            <button onclick="copyCurrentTabContent()" class="text-xs text-slate-400 hover:text-emerald-400 font-mono flex items-center space-x-1 px-2 py-1 rounded hover:bg-slate-800 transition">
+              <i class="fa-solid fa-copy text-xs"></i>
+              <span>Copy</span>
             </button>
           </div>
 
@@ -287,7 +306,7 @@
             </div>
             <div id="answers-visualizer" class="space-y-3">
               <div class="text-center py-16 text-slate-500 text-sm">
-                Pilih salah satu workflow atau klik <span class="text-emerald-400 font-semibold">"Jalankan Decision Engine"</span> untuk melihat hasil terkalibrasi.
+                Select a workflow above or click <span class="text-emerald-400 font-semibold">"Run Decision Engine"</span> to view calibrated decisions.
               </div>
             </div>
           </div>
@@ -295,7 +314,7 @@
           <!-- Tab 2: Live cURL Preview -->
           <div id="view-curl" class="hidden space-y-2">
             <div class="text-[11px] text-slate-400 flex items-center justify-between">
-              <span>Live cURL command (menggunakan API Token aktif):</span>
+              <span>Live cURL command (using active API Key):</span>
               <span class="text-emerald-400 font-mono text-[10px]">Header: X-API-Key</span>
             </div>
             <pre id="curl-code" class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs text-emerald-400 font-mono overflow-x-auto max-h-96"></pre>
@@ -303,7 +322,7 @@
 
           <!-- Tab 3: Python Code -->
           <div id="view-python" class="hidden space-y-2">
-            <div class="text-[11px] text-slate-400">Python code snippet (lengkap dengan API Token):</div>
+            <div class="text-[11px] text-slate-400">Python code snippet (with API Key header):</div>
             <pre id="python-code" class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs text-cyan-300 font-mono overflow-x-auto max-h-96"></pre>
           </div>
 
@@ -325,18 +344,21 @@
       <div class="flex items-center justify-between">
         <div>
           <h3 class="text-lg font-bold text-white flex items-center space-x-2">
-            <span>🔑 Pengaturan API Tokens</span>
+            <i class="fa-solid fa-key text-emerald-400"></i>
+            <span>API Keys Management</span>
           </h3>
-          <p class="text-xs text-slate-400">Generate dan kelola API Token untuk mengamankan akses API dari client luar.</p>
+          <p class="text-xs text-slate-400">Generate and manage API keys to secure external API access.</p>
         </div>
-        <button onclick="closeApiTokensModal()" class="text-slate-400 hover:text-white">✕</button>
+        <button onclick="closeApiTokensModal()" class="text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
       </div>
 
       <!-- Protection Toggle Switch -->
       <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-between">
         <div>
-          <div class="font-bold text-xs text-white">Wajibkan Proteksi API Token</div>
-          <div class="text-[11px] text-slate-400">Jika aktif, semua request eksternal tanpa header <code class="text-emerald-400 font-mono">X-API-Key</code> akan ditolak (401 Unauthorized).</div>
+          <div class="font-bold text-xs text-white">Require API Key Protection</div>
+          <div class="text-[11px] text-slate-400">When enabled, all external requests without an <code class="text-emerald-400 font-mono">X-API-Key</code> header will be rejected (401 Unauthorized).</div>
         </div>
         <label class="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" id="protection-toggle" onchange="handleToggleProtection(this.checked)" class="sr-only peer">
@@ -346,12 +368,13 @@
 
       <!-- Generate New Token Form -->
       <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
-        <label class="font-bold text-xs text-slate-300 block">Buat Token Baru</label>
+        <label class="font-bold text-xs text-slate-300 block">Create New API Key</label>
         <div class="flex items-center space-x-2">
-          <input type="text" id="new-token-name" placeholder="Nama Token (contoh: Backend Mobile, Zapier, Webhook)"
+          <input type="text" id="new-token-name" placeholder="Key name (e.g., Mobile Backend, Webhook, Zapier)"
             class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none focus:border-emerald-500">
-          <button onclick="submitGenerateKey()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow transition">
-            + Generate Token
+          <button onclick="submitGenerateKey()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-plus text-xs"></i>
+            <span>Generate Key</span>
           </button>
         </div>
       </div>
@@ -359,8 +382,8 @@
       <!-- Active Tokens List -->
       <div class="space-y-2.5">
         <div class="flex items-center justify-between">
-          <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Daftar API Token Aktif</label>
-          <span id="token-list-count" class="text-xs text-slate-400 font-mono">0 token</span>
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Active API Keys</label>
+          <span id="token-list-count" class="text-xs text-slate-400 font-mono">0 keys</span>
         </div>
         <div id="tokens-table" class="space-y-2 max-h-52 overflow-y-auto pr-1">
           <!-- Loaded via JS -->
@@ -369,7 +392,7 @@
 
       <div class="flex items-center justify-end pt-3 border-t border-slate-800">
         <button onclick="closeApiTokensModal()" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl transition">
-          Tutup
+          Close
         </button>
       </div>
     </div>
@@ -379,92 +402,106 @@
   <div id="chpass-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5">
       <div class="flex items-center justify-between">
-        <h3 class="text-lg font-bold text-white">🔑 Ganti Password</h3>
-        <button onclick="closeChangePasswordModal()" class="text-slate-400 hover:text-white">✕</button>
+        <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+          <i class="fa-solid fa-lock text-emerald-400"></i>
+          <span>Change Password</span>
+        </h3>
+        <button onclick="closeChangePasswordModal()" class="text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
       </div>
       <div class="space-y-3">
         <div>
-          <label class="text-xs font-semibold text-slate-300 block mb-1">Password Lama</label>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Current Password</label>
           <input type="password" id="old-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 outline-none focus:border-emerald-500 font-mono">
         </div>
         <div>
-          <label class="text-xs font-semibold text-slate-300 block mb-1">Password Baru (min 4 karakter)</label>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">New Password (min 4 characters)</label>
           <input type="password" id="new-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 outline-none focus:border-emerald-500 font-mono">
         </div>
         <div>
-          <label class="text-xs font-semibold text-slate-300 block mb-1">Konfirmasi Password Baru</label>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Confirm New Password</label>
           <input type="password" id="confirm-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 outline-none focus:border-emerald-500 font-mono">
         </div>
         <div id="chpass-error" class="hidden text-xs text-red-400"></div>
         <div id="chpass-success" class="hidden text-xs text-emerald-400"></div>
       </div>
-      <button onclick="submitChangePassword()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg transition">
-        Simpan Password Baru
+      <button onclick="submitChangePassword()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center space-x-2">
+        <i class="fa-solid fa-check text-xs"></i>
+        <span>Save New Password</span>
       </button>
     </div>
   </div>
 
-  <!-- Modal: Create New Workflow / Project -->
+  <!-- Modal: Create / Edit Decision Workflow -->
   <div id="new-workflow-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-5 my-8">
       <div class="flex items-center justify-between">
         <div>
-          <h3 class="text-lg font-bold text-white">✨ Buat Project / Workflow Baru</h3>
-          <p class="text-xs text-slate-400">Buat alur keputusan otomatis kustom yang disimpan permanen di backend.</p>
+          <h3 id="wf-modal-title" class="text-lg font-bold text-white flex items-center space-x-2">
+            <i class="fa-solid fa-sliders text-emerald-400"></i>
+            <span>Create New Decision Workflow</span>
+          </h3>
+          <p id="wf-modal-subtitle" class="text-xs text-slate-400">Create an automated decision workflow saved permanently in backend storage.</p>
         </div>
-        <button onclick="closeNewWorkflowModal()" class="text-slate-400 hover:text-white">✕</button>
+        <button onclick="closeNewWorkflowModal()" class="text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
       </div>
 
       <div class="space-y-4 max-h-[65vh] overflow-y-auto pr-1">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">ID Workflow (Unik, huruf kecil & underscore)</label>
-            <input type="text" id="new-wf-name" placeholder="contoh: fraud_order_detection" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 font-mono outline-none focus:border-emerald-500">
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Workflow ID (unique alphanumeric & underscore)</label>
+            <input type="text" id="new-wf-name" placeholder="e.g., fraud_order_detection" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 font-mono outline-none focus:border-emerald-500 disabled:opacity-60 disabled:bg-slate-900">
           </div>
           <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Judul Tampilan (Title)</label>
-            <input type="text" id="new-wf-title" placeholder="contoh: Fraud & Risk Scoring" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 outline-none focus:border-emerald-500">
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Display Title</label>
+            <input type="text" id="new-wf-title" placeholder="e.g., Fraud & Risk Scoring" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 outline-none focus:border-emerald-500">
           </div>
         </div>
 
         <div>
-          <label class="text-xs font-semibold text-slate-300 block mb-1">Deskripsi Workflow</label>
-          <input type="text" id="new-wf-desc" placeholder="Menilai risiko penipuan transaksi e-commerce..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 outline-none focus:border-emerald-500">
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Description</label>
+          <input type="text" id="new-wf-desc" placeholder="Assess transaction fraud risk, chargebacks, and anomalies..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 outline-none focus:border-emerald-500">
         </div>
 
         <div>
-          <label class="text-xs font-semibold text-slate-300 block mb-1">Model Target</label>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Target Model</label>
           <select id="new-wf-model" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 font-mono outline-none focus:border-emerald-500">
-            <option value="auto">Auto Router (Otomatis)</option>
+            <option value="auto">Auto Router (Recommended)</option>
             <option value="english">English (ModernBERT)</option>
-            <option value="multilingual">Multilingual (Bahasa Indonesia & 100+ Bahasa)</option>
+            <option value="multilingual">Multilingual (Indonesian & 100+ Languages)</option>
             <option value="typed-decisions">Typed-Decisions Workflow</option>
           </select>
         </div>
 
         <div>
-          <label class="text-xs font-semibold text-slate-300 block mb-1">Contoh State Input (Teks atau JSON)</label>
-          <textarea id="new-wf-state" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 font-mono outline-none focus:border-emerald-500" placeholder='{"order_id": "ORD-123", "amount": 5000000, "note": "Pembelian mendadak nominal besar"}'></textarea>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Sample Input State (Text or JSON)</label>
+          <textarea id="new-wf-state" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 font-mono outline-none focus:border-emerald-500" placeholder='{"order_id": "ORD-123", "amount": 5000000, "note": "High value order from unrecognized IP"}'></textarea>
         </div>
 
         <div>
           <div class="flex items-center justify-between mb-1">
-            <label class="text-xs font-semibold text-slate-300">Daftar Pertanyaan (Questions Schema JSON)</label>
-            <button onclick="insertSampleQuestions()" class="text-xs text-emerald-400 hover:underline font-mono">Gunakan Template Contoh</button>
+            <label class="text-xs font-semibold text-slate-300">Questions Schema (JSON)</label>
+            <button onclick="insertSampleQuestions()" class="text-xs text-emerald-400 hover:underline font-mono flex items-center space-x-1">
+              <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+              <span>Use Example Template</span>
+            </button>
           </div>
           <textarea id="new-wf-questions" rows="7" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 font-mono outline-none focus:border-emerald-500" placeholder='{
-  "tindakan": {
+  "action": {
     "type": "choice",
-    "instructions": "Apa tindakan untuk order ini?",
+    "instructions": "What action should be taken for this order?",
     "criteria": {
-      "approve": "transaksi aman",
-      "review": "perlu verifikasi manual",
-      "reject": "terindikasi penipuan"
+      "approve": "safe transaction",
+      "manual_review": "requires human review",
+      "reject": "high fraud risk"
     }
   },
-  "indikasi_fraud": {
+  "is_fraud": {
     "type": "noul",
-    "instructions": "Apakah ada indikasi penipuan?"
+    "instructions": "Is there strong evidence of fraud or card theft?"
   }
 }'></textarea>
         </div>
@@ -472,13 +509,22 @@
         <div id="new-wf-error" class="hidden text-xs text-red-400"></div>
       </div>
 
-      <div class="flex items-center justify-end space-x-3 pt-3 border-t border-slate-800">
-        <button onclick="closeNewWorkflowModal()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl transition">
-          Batal
-        </button>
-        <button onclick="saveNewWorkflow()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg transition">
-          Simpan Workflow
-        </button>
+      <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+        <div>
+          <button id="wf-modal-delete-btn" onclick="deleteFromModal()" class="hidden px-3.5 py-2.5 bg-rose-950 hover:bg-rose-900 border border-rose-800 text-rose-300 text-xs font-semibold rounded-xl transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-trash-can text-xs"></i>
+            <span>Delete Workflow</span>
+          </button>
+        </div>
+        <div class="flex items-center space-x-3">
+          <button onclick="closeNewWorkflowModal()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl transition">
+            Cancel
+          </button>
+          <button id="wf-modal-submit-btn" onclick="saveNewWorkflow()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-floppy-disk text-xs"></i>
+            <span>Save Workflow</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -535,10 +581,40 @@
       document.getElementById('user-dropdown-role').textContent = (user.role || 'USER').toUpperCase();
     }
 
-    function toggleUserDropdown() {
+    function toggleUserDropdown(event) {
+      if (event) event.stopPropagation();
+      closeAllKebabMenus();
       const drop = document.getElementById('user-dropdown');
       drop.classList.toggle('hidden');
     }
+
+    function toggleKebabMenu(name, event) {
+      if (event) event.stopPropagation();
+      const drop = document.getElementById('user-dropdown');
+      if (drop) drop.classList.add('hidden');
+
+      const target = document.getElementById(`kebab-menu-${name}`);
+      if (!target) return;
+      const isHidden = target.classList.contains('hidden');
+      closeAllKebabMenus();
+      if (isHidden) {
+        target.classList.remove('hidden');
+      }
+    }
+
+    function closeAllKebabMenus() {
+      document.querySelectorAll('[id^="kebab-menu-"]').forEach(el => {
+        el.classList.add('hidden');
+      });
+    }
+
+    window.addEventListener('click', () => {
+      closeAllKebabMenus();
+      const drop = document.getElementById('user-dropdown');
+      if (drop && !drop.classList.contains('hidden')) {
+        drop.classList.add('hidden');
+      }
+    });
 
     async function submitLogin() {
       const username = document.getElementById('login-username').value.trim();
@@ -551,7 +627,7 @@
       errEl.classList.add('hidden');
       btn.disabled = true;
       spinner.classList.remove('hidden');
-      btnText.textContent = "Memverifikasi...";
+      btnText.textContent = "Authenticating...";
 
       try {
         const res = await fetch('/api/v1/auth/login', {
@@ -570,16 +646,16 @@
           await loadPresets();
           updateCurlPreview();
         } else {
-          errEl.textContent = data.detail || 'Username atau password salah.';
+          errEl.textContent = data.detail || 'Invalid username or password.';
           errEl.classList.remove('hidden');
         }
       } catch (e) {
-        errEl.textContent = 'Gagal menghubungi server: ' + e.message;
+        errEl.textContent = 'Failed to connect to server: ' + e.message;
         errEl.classList.remove('hidden');
       } finally {
         btn.disabled = false;
         spinner.classList.add('hidden');
-        btnText.textContent = "Masuk ke Studio";
+        btnText.textContent = "Sign In to Studio";
       }
     }
 
@@ -622,11 +698,11 @@
     function renderApiKeysTable() {
       const container = document.getElementById('tokens-table');
       const countEl = document.getElementById('token-list-count');
-      countEl.textContent = `${apiKeysList.length} token aktif`;
+      countEl.textContent = `${apiKeysList.length} active keys`;
       container.innerHTML = '';
 
       if (apiKeysList.length === 0) {
-        container.innerHTML = '<div class="text-xs text-slate-500 py-3 text-center">Belum ada API Key dibuat.</div>';
+        container.innerHTML = '<div class="text-xs text-slate-500 py-3 text-center">No API keys created yet.</div>';
         return;
       }
 
@@ -637,18 +713,19 @@
           <div class="space-y-1">
             <div class="flex items-center space-x-2">
               <span class="text-xs font-bold text-slate-200">${k.name}</span>
-              <span class="text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-800 px-1.5 py-0.2 rounded font-mono">Aktif</span>
+              <span class="text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-800 px-1.5 py-0.2 rounded font-mono">Active</span>
             </div>
             <div class="font-mono text-xs text-emerald-400/90 flex items-center space-x-2">
               <span>${k.token}</span>
             </div>
           </div>
           <div class="flex items-center space-x-2">
-            <button onclick="copyText('${k.token}')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-lg transition font-mono">
-              Salin
+            <button onclick="copyText('${k.token}')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-lg transition font-mono flex items-center space-x-1">
+              <i class="fa-solid fa-copy text-xs"></i>
+              <span>Copy</span>
             </button>
-            <button onclick="deleteApiKey('${k.id}')" title="Revoke key" class="p-1 text-slate-500 hover:text-red-400 transition">
-              ✕
+            <button onclick="deleteApiKey('${k.id}')" title="Revoke key" class="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-950/50 rounded-lg transition">
+              <i class="fa-solid fa-trash-can text-xs"></i>
             </button>
           </div>
         `;
@@ -681,12 +758,12 @@
         const d = await res.json();
         alert(d.message);
       } catch (e) {
-        alert("Gagal mengubah proteksi: " + e.message);
+        alert("Failed to update protection: " + e.message);
       }
     }
 
     async function submitGenerateKey() {
-      const name = document.getElementById('new-token-name').value.trim() || 'API Key Baru';
+      const name = document.getElementById('new-token-name').value.trim() || 'New API Key';
       try {
         const res = await fetch('/api/v1/api-keys', {
           method: 'POST',
@@ -700,7 +777,7 @@
           document.getElementById('new-token-name').value = '';
           await loadApiKeys();
         } else {
-          alert("Gagal membuat API Key.");
+          alert("Failed to generate API Key.");
         }
       } catch (e) {
         alert("Error: " + e.message);
@@ -708,7 +785,7 @@
     }
 
     async function deleteApiKey(id) {
-      if (!confirm("Apakah Anda yakin ingin menghapus / merevoke API Key ini? Client yang menggunakan key ini akan ditolak.")) return;
+      if (!confirm("Are you sure you want to revoke this API Key? Clients using this key will be rejected.")) return;
       try {
         const res = await fetch(`/api/v1/api-keys/${id}`, {
           method: 'DELETE',
@@ -724,20 +801,24 @@
 
     function copyText(val) {
       navigator.clipboard.writeText(val);
-      alert("API Token disalin ke clipboard!");
+      alert("Copied to clipboard!");
     }
 
     // ==========================================
-    // PRESETS & DECISION ENGINE
+    // WORKFLOWS & DECISION ENGINE
     // ==========================================
-    async function loadPresets() {
+    async function loadPresets(preserveName = null) {
       try {
         const res = await fetch('/api/v1/presets');
         const data = await res.json();
         presets = data.presets || [];
         document.getElementById('workflow-count-badge').textContent = presets.length;
         renderPresetButtons();
-        if (presets.length > 0) {
+
+        const targetName = preserveName || (currentPreset ? currentPreset.name : (presets.length > 0 ? presets[0].name : null));
+        if (targetName && presets.some(p => p.name === targetName)) {
+          selectPreset(targetName);
+        } else if (presets.length > 0) {
           selectPreset(presets[0].name);
         }
       } catch (err) {
@@ -760,25 +841,31 @@
       presets.forEach(p => {
         const btn = document.createElement('div');
         const isSelected = currentPreset && currentPreset.name === p.name;
-        btn.className = `preset-card relative p-2.5 rounded-xl border text-left cursor-pointer transition flex flex-col justify-between ${
+        btn.className = `preset-card relative p-2.5 rounded-xl border text-left cursor-pointer transition flex flex-col justify-between group ${
           isSelected
             ? 'bg-emerald-950/80 border-emerald-500/60 text-emerald-300 ring-1 ring-emerald-500/40'
             : 'bg-slate-950/70 border-slate-800 text-slate-300 hover:border-slate-700'
         }`;
         btn.id = `preset-btn-${p.name}`;
         
-        let customBadge = p.is_custom
-          ? `<span class="text-[9px] bg-indigo-900/80 text-indigo-300 px-1.5 py-0.2 rounded font-mono">Custom</span>`
-          : `<span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.2 rounded font-mono">Preset</span>`;
-
-        let deleteBtn = p.is_custom
-          ? `<button onclick="deleteCustomWorkflow('${p.name}', event)" title="Hapus workflow" class="text-slate-400 hover:text-red-400 p-0.5">✕</button>`
-          : '';
-
         btn.innerHTML = `
           <div class="flex items-center justify-between">
-            <span class="font-bold text-xs truncate max-w-[120px]">${p.title || p.name}</span>
-            <div class="flex items-center space-x-1">${customBadge}${deleteBtn}</div>
+            <span class="font-bold text-xs truncate max-w-[105px]">${p.title || p.name}</span>
+            <div class="relative shrink-0">
+              <button onclick="toggleKebabMenu('${p.name}', event)" title="Workflow options" class="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition">
+                <i class="fa-solid fa-ellipsis-vertical text-xs"></i>
+              </button>
+              <div id="kebab-menu-${p.name}" class="hidden absolute right-0 top-7 z-30 w-36 bg-slate-900 border border-slate-700/80 rounded-xl shadow-2xl py-1 text-xs backdrop-blur space-y-0.5">
+                <button onclick="openEditWorkflowModal('${p.name}', event); closeAllKebabMenus();" class="w-full text-left px-3 py-1.5 text-slate-300 hover:bg-slate-800 hover:text-white flex items-center space-x-2 transition">
+                  <i class="fa-solid fa-pen-to-square text-[11px] text-emerald-400 w-3.5"></i>
+                  <span>Edit Details</span>
+                </button>
+                <button onclick="deleteCustomWorkflow('${p.name}', event); closeAllKebabMenus();" class="w-full text-left px-3 py-1.5 text-rose-400 hover:bg-rose-950/80 hover:text-rose-300 flex items-center space-x-2 transition border-t border-slate-800/60">
+                  <i class="fa-solid fa-trash-can text-[11px] w-3.5"></i>
+                  <span>Delete</span>
+                </button>
+              </div>
+            </div>
           </div>
           <span class="text-[10px] text-slate-400 truncate mt-1">${p.description ? p.description.slice(0, 32) + '...' : p.name}</span>
         `;
@@ -798,6 +885,11 @@
         document.getElementById('questions-input').value = JSON.stringify(currentPreset.questions, null, 2);
         if (currentPreset.model) {
           document.getElementById('model-override-select').value = currentPreset.model;
+        }
+
+        const quickSaveLabel = document.getElementById('quick-save-btn-label');
+        if (quickSaveLabel) {
+          quickSaveLabel.textContent = 'Save Workflow';
         }
       }
       inspectLang();
@@ -837,7 +929,7 @@
         document.getElementById('questions-input').value = JSON.stringify(parsed, null, 2);
         updateCurlPreview();
       } catch (e) {
-        alert("JSON pertanyaan tidak valid: " + e.message);
+        alert("Invalid JSON format: " + e.message);
       }
     }
 
@@ -897,10 +989,10 @@ print(response.json())`;
         const btn = document.getElementById(`tab-${t}`);
         const view = document.getElementById(`view-${t}`);
         if (t === tab) {
-          btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition bg-emerald-950 text-emerald-300 border border-emerald-500/40';
+          btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition bg-emerald-950 text-emerald-300 border border-emerald-500/40 flex items-center space-x-1.5';
           view.classList.remove('hidden');
         } else {
-          btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition';
+          btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition flex items-center space-x-1.5';
           view.classList.add('hidden');
         }
       });
@@ -918,7 +1010,7 @@ print(response.json())`;
         textToCopy = JSON.stringify(lastResultData, null, 2);
       }
       navigator.clipboard.writeText(textToCopy);
-      alert("Teks berhasil disalin ke clipboard!");
+      alert("Copied to clipboard!");
     }
 
     async function executeDecision() {
@@ -940,13 +1032,13 @@ print(response.json())`;
       try {
         parsedQuestions = JSON.parse(questionsVal);
       } catch (e) {
-        alert("Error format JSON pertanyaan: " + e.message);
+        alert("Invalid Questions JSON schema: " + e.message);
         return;
       }
 
       btn.disabled = true;
       spinner.classList.remove('hidden');
-      btnText.textContent = "Menjalankan Single Forward Pass (33ms)...";
+      btnText.textContent = "Executing Single Forward Pass (33ms)...";
 
       const reqBody = {
         state: parsedState,
@@ -969,17 +1061,17 @@ print(response.json())`;
 
         const data = await res.json();
         if (!res.ok) {
-          alert(`Request Gagal (${res.status}): ${data.detail || data.message || 'Error'}`);
+          alert(`Request Failed (${res.status}): ${data.detail || data.message || 'Error'}`);
           return;
         }
         lastResultData = data;
         renderResults(data);
       } catch (err) {
-        alert("Gagal mengeksekusi: " + err.message);
+        alert("Failed to execute: " + err.message);
       } finally {
         btn.disabled = false;
         spinner.classList.add('hidden');
-        btnText.textContent = "⚡ Jalankan Decision Engine (1 Forward Pass)";
+        btnText.textContent = "Run Decision Engine (1 Forward Pass)";
       }
     }
 
@@ -1004,7 +1096,7 @@ print(response.json())`;
       visualizer.innerHTML = '';
 
       if (qKeys.length === 0) {
-        visualizer.innerHTML = '<div class="text-slate-500 text-sm">Tidak ada jawaban yang dikembalikan.</div>';
+        visualizer.innerHTML = '<div class="text-slate-500 text-sm">No answers returned.</div>';
         return;
       }
 
@@ -1037,7 +1129,7 @@ print(response.json())`;
             valDisplay = `
               <div class="flex items-center flex-wrap gap-2.5">
                 <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-sm font-black tracking-wide border bg-emerald-950/90 border-emerald-500/70 text-emerald-300 shadow-md shadow-emerald-950/60">
-                  <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                  <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
                   YES <span class="text-[10px] font-semibold text-emerald-400/80 uppercase tracking-widest bg-emerald-900/60 px-1.5 py-0.5 rounded">TRUE</span>
                 </span>
                 <span class="text-xs font-mono text-emerald-400/90 font-medium">Condition / Action Trigger Confirmed</span>
@@ -1047,7 +1139,7 @@ print(response.json())`;
             valDisplay = `
               <div class="flex items-center flex-wrap gap-2.5">
                 <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-sm font-black tracking-wide border bg-rose-950/90 border-rose-500/70 text-rose-300 shadow-md shadow-rose-950/60">
-                  <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                  <i class="fa-solid fa-circle-xmark text-rose-400 text-sm"></i>
                   NO <span class="text-[10px] font-semibold text-rose-400/80 uppercase tracking-widest bg-rose-900/60 px-1.5 py-0.5 rounded">FALSE</span>
                 </span>
                 <span class="text-xs font-mono text-slate-400 font-medium">Condition Not Met (No Action)</span>
@@ -1131,6 +1223,7 @@ print(response.json())`;
           valDisplay = `
             <div class="flex items-center flex-wrap gap-2.5">
               <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-sm font-black tracking-wide border ${badgeColor}">
+                <i class="fa-solid fa-gauge-high text-xs"></i>
                 Score: ${formattedScore} / ${maxLevel} <span class="text-[10px] font-semibold uppercase tracking-widest bg-black/40 px-1.5 py-0.5 rounded">${severityTag}</span>
               </span>
               <span class="text-xs font-mono text-slate-300 font-medium truncate max-w-full">
@@ -1157,8 +1250,9 @@ print(response.json())`;
                     return `
                       <div class="bg-slate-900/60 p-2 rounded-lg border ${isTop ? 'border-slate-700 ring-1 ring-emerald-500/20' : 'border-slate-800/60'}">
                         <div class="flex justify-between text-[11px] font-mono mb-1">
-                          <span class="${isTop ? 'text-white font-bold' : 'text-slate-400'} truncate mr-2">
-                            ${isTop ? '★ ' : ''}<b>[L${lvl}]</b> ${desc}
+                          <span class="${isTop ? 'text-white font-bold' : 'text-slate-400'} truncate mr-2 flex items-center space-x-1.5">
+                            ${isTop ? '<i class="fa-solid fa-star text-amber-400 text-[10px]"></i>' : ''}
+                            <span><b>[L${lvl}]</b> ${desc}</span>
                           </span>
                           <span class="${isTop ? 'text-emerald-400 font-bold' : 'text-slate-400'} shrink-0">${pPct}%</span>
                         </div>
@@ -1180,8 +1274,8 @@ print(response.json())`;
             ? 'bg-emerald-950/90 border-emerald-500/70 text-emerald-300 shadow-md shadow-emerald-950/60' 
             : 'bg-rose-950/90 border-rose-500/70 text-rose-300 shadow-md shadow-rose-950/60';
           const icon = isYes 
-            ? '<svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>'
-            : '<svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>';
+            ? '<i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>' 
+            : '<i class="fa-solid fa-circle-xmark text-rose-400 text-sm"></i>';
 
           valDisplay = `
             <div class="flex items-center gap-2.5">
@@ -1200,7 +1294,7 @@ print(response.json())`;
           `;
 
         } else {
-          // CATEGORICAL MULTI-CHOICE DECISION (e.g. refund, billing, technical, etc.)
+          // CATEGORICAL MULTI-CHOICE DECISION
           const rawProbs = ans.probs || ans.probabilities || {};
           const probEntries = Object.entries(rawProbs);
           const topChoice = String(ans.choice || (probEntries.length > 0 ? probEntries[0][0] : 'Selected'));
@@ -1209,7 +1303,7 @@ print(response.json())`;
           valDisplay = `
             <div class="flex items-center flex-wrap gap-2.5">
               <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-sm font-black tracking-wide border border-cyan-500/70 bg-cyan-950/90 text-cyan-300 shadow-md shadow-cyan-950/60">
-                <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <i class="fa-solid fa-tag text-cyan-400 text-xs"></i>
                 ${topChoice} <span class="text-[10px] font-semibold text-cyan-400/80 uppercase tracking-widest bg-cyan-900/60 px-1.5 py-0.5 rounded">${topProb}</span>
               </span>
               <span class="text-xs font-mono text-cyan-400/90 font-medium">Selected Category</span>
@@ -1231,8 +1325,9 @@ print(response.json())`;
                     return `
                       <div class="bg-slate-900/60 p-2 rounded-lg border ${isWinner ? 'border-cyan-700/60 ring-1 ring-cyan-500/20' : 'border-slate-800/60'}">
                         <div class="flex justify-between text-[11px] font-mono mb-1">
-                          <span class="${isWinner ? 'text-cyan-200 font-bold' : 'text-slate-400'} truncate mr-2">
-                            ${isWinner ? '✔ ' : ''}${opt}
+                          <span class="${isWinner ? 'text-cyan-200 font-bold' : 'text-slate-400'} truncate mr-2 flex items-center space-x-1.5">
+                            ${isWinner ? '<i class="fa-solid fa-check text-cyan-400 text-[10px]"></i>' : ''}
+                            <span>${opt}</span>
                           </span>
                           <span class="${isWinner ? 'text-cyan-300 font-bold' : 'text-slate-400'} shrink-0">${pPct}%</span>
                         </div>
@@ -1270,14 +1365,52 @@ print(response.json())`;
       switchTab('visual');
     }
 
-    // Modal Workflow Functions
+    // ==========================================
+    // WORKFLOW PROJECTS MANAGEMENT (CRUD)
+    // ==========================================
+    let isEditingWorkflow = false;
+
     function openNewWorkflowModal() {
+      isEditingWorkflow = false;
+      document.getElementById('wf-modal-title').innerHTML = '<i class="fa-solid fa-sliders text-emerald-400"></i><span>Create New Decision Workflow</span>';
+      document.getElementById('wf-modal-subtitle').textContent = 'Create an automated decision workflow saved permanently in backend storage.';
+      document.getElementById('wf-modal-submit-btn').innerHTML = '<i class="fa-solid fa-floppy-disk text-xs"></i><span>Save Workflow</span>';
+      document.getElementById('wf-modal-delete-btn').classList.add('hidden');
+
+      const nameInput = document.getElementById('new-wf-name');
+      nameInput.disabled = false;
+      nameInput.value = '';
+
       document.getElementById('new-wf-error').classList.add('hidden');
-      document.getElementById('new-wf-name').value = '';
       document.getElementById('new-wf-title').value = '';
       document.getElementById('new-wf-desc').value = '';
+      document.getElementById('new-wf-model').value = 'auto';
       document.getElementById('new-wf-state').value = '';
       document.getElementById('new-wf-questions').value = '';
+      document.getElementById('new-workflow-modal').classList.remove('hidden');
+    }
+
+    function openEditWorkflowModal(name, event) {
+      if (event) event.stopPropagation();
+      const p = presets.find(item => item.name === name);
+      if (!p) return;
+
+      isEditingWorkflow = true;
+      document.getElementById('wf-modal-title').innerHTML = `<i class="fa-solid fa-pen-to-square text-emerald-400"></i><span>Edit Workflow: ${p.title || p.name}</span>`;
+      document.getElementById('wf-modal-subtitle').textContent = 'Update workflow configuration, target model, sample input state, or questions schema.';
+      document.getElementById('wf-modal-submit-btn').innerHTML = '<i class="fa-solid fa-floppy-disk text-xs"></i><span>Update Workflow</span>';
+      document.getElementById('wf-modal-delete-btn').classList.remove('hidden');
+
+      const nameInput = document.getElementById('new-wf-name');
+      nameInput.value = p.name;
+      nameInput.disabled = true;
+
+      document.getElementById('new-wf-error').classList.add('hidden');
+      document.getElementById('new-wf-title').value = p.title || '';
+      document.getElementById('new-wf-desc').value = p.description || '';
+      document.getElementById('new-wf-model').value = p.model || 'auto';
+      document.getElementById('new-wf-state').value = typeof p.example_state === 'object' ? JSON.stringify(p.example_state, null, 2) : (p.example_state || '');
+      document.getElementById('new-wf-questions').value = JSON.stringify(p.questions || {}, null, 2);
       document.getElementById('new-workflow-modal').classList.remove('hidden');
     }
 
@@ -1285,38 +1418,130 @@ print(response.json())`;
       document.getElementById('new-workflow-modal').classList.add('hidden');
     }
 
+    function deleteFromModal() {
+      const name = document.getElementById('new-wf-name').value.trim();
+      if (!name) return;
+      deleteCustomWorkflow(name, { stopPropagation: () => {} });
+      closeNewWorkflowModal();
+    }
+
     function insertSampleQuestions() {
       document.getElementById('new-wf-name').value = 'ecommerce_fraud_scoring';
       document.getElementById('new-wf-title').value = 'E-Commerce Fraud & Chargeback Risk';
-      document.getElementById('new-wf-desc').value = 'Deteksi otomatis order penipuan, anomali kartu, dan tingkat risiko.';
+      document.getElementById('new-wf-desc').value = 'Automated fraud detection, chargeback prediction, and risk scoring.';
       document.getElementById('new-wf-state').value = JSON.stringify({
         "order_id": "ORD-9912",
-        "customer": "Budi",
-        "nominal": 15000000,
-        "lokasi_ip": "Nigeria",
-        "alamat_kirim": "Jakarta",
-        "catatan": "Pembelian 3 smartphone sekaligus dengan kartu baru"
+        "customer": "Alex",
+        "amount_usd": 1500,
+        "shipping_country": "US",
+        "card_country": "NG",
+        "note": "Purchased 3 high-end smartphones with newly issued card."
       }, null, 2);
       document.getElementById('new-wf-questions').value = JSON.stringify({
-        "keputusan_order": {
+        "action": {
           "type": "choice",
-          "instructions": "Apa keputusan untuk transaksi order ini?",
+          "instructions": "What action should be taken for this order transaction?",
           "criteria": {
-            "approve": "transaksi aman dan wajar",
-            "manual_review": "transaksi mencurigakan butuh verifikasi telepon",
-            "reject": "terindikasi kuat penipuan atau pencurian kartu"
+            "approve": "normal and safe transaction",
+            "manual_review": "suspicious, requires phone verification",
+            "reject": "clear indication of fraudulent card activity"
           }
         },
-        "skor_risiko": {
+        "risk_score": {
           "type": "score",
-          "instructions": "Tingkat risiko transaksi:",
-          "criteria": ["rendah", "sedang", "tinggi", "sangat kritis"]
+          "instructions": "Transaction risk rating level:",
+          "criteria": ["low", "moderate", "high", "critical"]
         },
-        "butuh_verifikasi_ktp": {
+        "require_id_verification": {
           "type": "noul",
-          "instructions": "Apakah order ini perlu meminta verifikasi foto KTP/identitas?"
+          "instructions": "Should the system request photo ID verification before fulfillment?"
         }
       }, null, 2);
+    }
+
+    async function quickSaveActiveWorkflow() {
+      if (!currentPreset) {
+        openNewWorkflowModal();
+        return;
+      }
+
+      const stateVal = document.getElementById('state-input').value.trim();
+      const questionsVal = document.getElementById('questions-input').value.trim();
+      const modelVal = document.getElementById('model-override-select').value;
+
+      let parsedState, parsedQuestions;
+      try {
+        parsedState = JSON.parse(stateVal);
+      } catch (e) {
+        parsedState = stateVal;
+      }
+
+      try {
+        parsedQuestions = JSON.parse(questionsVal);
+      } catch (e) {
+        alert("Invalid Questions JSON schema: " + e.message);
+        return;
+      }
+
+      const btnLabel = document.getElementById('quick-save-btn-label');
+      const origText = btnLabel ? btnLabel.textContent : 'Save Workflow';
+      if (btnLabel) btnLabel.textContent = 'Saving...';
+
+      try {
+        const res = await fetch(`/api/v1/workflows/${currentPreset.name}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
+          },
+          body: JSON.stringify({
+            title: currentPreset.title || currentPreset.name,
+            description: currentPreset.description || '',
+            model: modelVal,
+            example_state: parsedState,
+            questions: parsedQuestions
+          })
+        });
+
+        if (res.ok) {
+          if (btnLabel) btnLabel.textContent = 'Saved!';
+          await loadPresets(currentPreset.name);
+          setTimeout(() => {
+            if (btnLabel) btnLabel.textContent = 'Save Workflow';
+          }, 1500);
+        } else {
+          // If not existing in custom storage yet, create it
+          const createRes = await fetch('/api/v1/workflows', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
+            },
+            body: JSON.stringify({
+              name: currentPreset.name,
+              title: currentPreset.title || currentPreset.name,
+              description: currentPreset.description || '',
+              model: modelVal,
+              example_state: parsedState,
+              questions: parsedQuestions
+            })
+          });
+          if (createRes.ok) {
+            if (btnLabel) btnLabel.textContent = 'Saved!';
+            await loadPresets(currentPreset.name);
+            setTimeout(() => {
+              if (btnLabel) btnLabel.textContent = 'Save Workflow';
+            }, 1500);
+          } else {
+            const errData = await createRes.json();
+            alert("Failed to save workflow: " + (errData.detail || 'Error'));
+            if (btnLabel) btnLabel.textContent = origText;
+          }
+        }
+      } catch (e) {
+        alert("Connection error: " + e.message);
+        if (btnLabel) btnLabel.textContent = origText;
+      }
     }
 
     async function saveNewWorkflow() {
@@ -1331,7 +1556,7 @@ print(response.json())`;
       errEl.classList.add('hidden');
 
       if (!name || !title || !questionsStr) {
-        errEl.textContent = 'Harap isi ID Workflow, Judul, dan Questions JSON.';
+        errEl.textContent = 'Please provide Workflow ID, Title, and Questions JSON schema.';
         errEl.classList.remove('hidden');
         return;
       }
@@ -1346,7 +1571,7 @@ print(response.json())`;
       try {
         parsedQuestions = JSON.parse(questionsStr);
       } catch (e) {
-        errEl.textContent = 'Format JSON Questions tidak valid: ' + e.message;
+        errEl.textContent = 'Invalid Questions JSON schema: ' + e.message;
         errEl.classList.remove('hidden');
         return;
       }
@@ -1361,8 +1586,11 @@ print(response.json())`;
       };
 
       try {
-        const res = await fetch('/api/v1/workflows', {
-          method: 'POST',
+        const url = isEditingWorkflow ? `/api/v1/workflows/${name}` : '/api/v1/workflows';
+        const method = isEditingWorkflow ? 'PUT' : 'POST';
+
+        const res = await fetch(url, {
+          method: method,
           headers: {
             'Content-Type': 'application/json',
             ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
@@ -1372,23 +1600,22 @@ print(response.json())`;
 
         if (res.ok) {
           closeNewWorkflowModal();
-          await loadPresets();
-          selectPreset(name);
-          alert(`Workflow "${title}" berhasil disimpan!`);
+          await loadPresets(name);
+          alert(isEditingWorkflow ? `Workflow "${title}" updated successfully!` : `Workflow "${title}" created successfully!`);
         } else {
           const errData = await res.json();
-          errEl.textContent = errData.detail || 'Gagal menyimpan workflow.';
+          errEl.textContent = errData.detail || 'Failed to save workflow.';
           errEl.classList.remove('hidden');
         }
       } catch (e) {
-        errEl.textContent = 'Error koneksi: ' + e.message;
+        errEl.textContent = 'Connection error: ' + e.message;
         errEl.classList.remove('hidden');
       }
     }
 
     async function deleteCustomWorkflow(name, event) {
-      event.stopPropagation();
-      if (!confirm(`Apakah Anda yakin ingin menghapus workflow "${name}"?`)) return;
+      if (event && event.stopPropagation) event.stopPropagation();
+      if (!confirm(`Are you sure you want to delete workflow "${name}"?`)) return;
 
       try {
         const res = await fetch(`/api/v1/workflows/${name}`, {
@@ -1398,9 +1625,13 @@ print(response.json())`;
           }
         });
         if (res.ok) {
+          const wasSelected = currentPreset && currentPreset.name === name;
           await loadPresets();
+          if (wasSelected && presets.length > 0) {
+            selectPreset(presets[0].name);
+          }
         } else {
-          alert("Gagal menghapus workflow.");
+          alert("Failed to delete workflow.");
         }
       } catch (e) {
         alert("Error: " + e.message);
@@ -1432,7 +1663,7 @@ print(response.json())`;
       succEl.classList.add('hidden');
 
       if (new_password !== confirm) {
-        errEl.textContent = 'Konfirmasi password baru tidak cocok.';
+        errEl.textContent = 'New password confirmation does not match.';
         errEl.classList.remove('hidden');
         return;
       }
@@ -1448,11 +1679,11 @@ print(response.json())`;
         });
         const data = await res.json();
         if (res.ok) {
-          succEl.textContent = data.message || 'Password berhasil diubah.';
+          succEl.textContent = data.message || 'Password changed successfully.';
           succEl.classList.remove('hidden');
           setTimeout(() => { closeChangePasswordModal(); }, 1200);
         } else {
-          errEl.textContent = data.detail || 'Gagal mengubah password.';
+          errEl.textContent = data.detail || 'Failed to change password.';
           errEl.classList.remove('hidden');
         }
       } catch (e) {

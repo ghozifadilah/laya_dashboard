@@ -32,6 +32,29 @@ class WorkflowCreateRequest(BaseModel):
     )
 
 
+class WorkflowUpdateRequest(BaseModel):
+    title: Optional[str] = Field(
+        None,
+        description="Human friendly display title",
+    )
+    description: Optional[str] = Field(
+        None,
+        description="Detailed description of the workflow purpose",
+    )
+    questions: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Dictionary of typed questions (choice, score, noul)",
+    )
+    example_state: Optional[Union[str, Dict[str, Any], List[Any]]] = Field(
+        None,
+        description="Sample input state (text or JSON) demonstrating this workflow",
+    )
+    model: Optional[str] = Field(
+        None,
+        description="Target checkpoint model: 'auto', 'english', 'multilingual', 'typed-decisions'",
+    )
+
+
 class WorkflowResponse(BaseModel):
     name: str
     title: str

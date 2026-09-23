@@ -4,8 +4,8 @@
       "username": "admin",
       "name": "Administrator",
       "role": "admin",
-      "password_hash": "d80c490460e5dd3c536c48be303767fc1f797c76d7626ac6b2705b1c7eab6e2b",
-      "salt": "bed693ff0340d4954cb90078b20f6b23",
+      "password_hash": "226a464a0d703f01447c3a18c199717210f4e9f8f8149a214d2aa1f45bf128e2",
+      "salt": "8e4157dc552b38a94c6c2c4325078d29",
       "created_at": 0,
       "updated_at": 0
     }
